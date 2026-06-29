@@ -741,17 +741,8 @@ if (recipeId) {
       flatItems.forEach(item => {
 
         // Try to find an existing item in the store
-        let existingItem = null;
+		let existingItem = findExistingItemDeep(store, item.name);
 
-        store.categories.forEach(cat => {
-          cat.subcategories?.forEach(subcat => {
-            subcat.items?.forEach(it => {
-              if (it.name.toLowerCase() === item.name.toLowerCase()) {
-                existingItem = it;
-              }
-            });
-          });
-        });
 
         if (existingItem) {
           // Item already exists in store → reuse it
@@ -1834,6 +1825,39 @@ document.getElementById("propagateAislesBtn").addEventListener("click", () => {
   saveModel();
   alert("Propagation complete. Nodes updated: " + changes);
 });
+
+function findExistingItemDeep(store, name) {
+  name = name.toLowerCase();
+
+  function searchNode(node) {
+    // Items directly under this node
+    if (node.items) {
+      for (const it of node.items) {
+        if (it.name.toLowerCase() === name) return it;
+      }
+    }
+
+    // Recurse into subcategories
+    if (node.subcategories) {
+      for (const sub of node.subcategories) {
+        const found = searchNode(sub);
+        if (found) return found;
+      }
+    }
+
+    return null;
+  }
+
+  // Search all top-level categories
+  for (const cat of store.categories) {
+    const found = searchNode(cat);
+    if (found) return found;
+  }
+
+  return null;
+}
+
+
 /* =========================
    Import
    ========================= */
