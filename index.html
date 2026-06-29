@@ -529,13 +529,23 @@ body { background:var(--bg);
     </div>
 
     <div class="panel-body">
+
+      <!-- LEFT PANEL (Stores & Categories) -->
       <div class="left">
         <div id="store-panel" class="panel store-panel">
           <ul id="rootList" class="root-list children-list" data-accept-level="0"></ul>
-
           <div id="store-stats" class="muted store-stats-bottom" aria-live="polite"></div>
         </div>
       </div>
+
+      <!-- RIGHT PANEL (Items — THIS WAS MISSING) -->
+      <div class="right">
+        <div id="item-panel" class="panel item-panel">
+          <ul id="itemList" class="item-list"></ul>
+          <div id="item-stats" class="muted item-stats-bottom" aria-live="polite"></div>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -543,7 +553,7 @@ body { background:var(--bg);
   <!--
     NOTE FOR YOU:
 
-    Your JS will generate rows inside #rootList.
+    Your JS will generate rows inside #rootList and #itemList.
     Each row should include SVG icons like this:
 
     <button class="action-icon edit">
@@ -563,11 +573,9 @@ body { background:var(--bg);
         <path d="..." />
       </svg>
     </button>
-
-    You do NOT put SVGs in the toolbar.
-    You ONLY put SVGs inside the item rows created by JavaScript.
   -->
 </body>
+
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 <script>
