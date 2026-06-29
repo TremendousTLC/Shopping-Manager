@@ -639,6 +639,36 @@ if (recipeId) {
     } else {
       flatItems = incomingRecipe.ingredients;
     }
+	
+// 5️⃣ Insert imported ingredients into a new category
+  const store = dataModel.stores.find(s => s.id === dataModel.activeStoreId);
+  if (store) {
+    const importCat = {
+      id: uid("cat"),
+      name: incomingRecipe.name || "Imported Recipe",
+      color: "#FF6B6B",
+      collapsed: false,
+      subcategories: [
+        {
+          id: uid("sub"),
+          name: "Ingredients",
+          collapsed: false,
+          items: flatItems.map(it => ({
+            id: uid("item"),
+            name: it.name,
+            qty: it.qty || "",
+            unit: it.unit || "",
+            prep: it.prep || "",
+            checked: false
+          }))
+        }
+      ]
+    };
+
+    store.categories.push(importCat);
+    saveModel();
+  }
+
 
 // MULTI-STORE IMPORT OPTION
 dataModel.stores.forEach(store => {
