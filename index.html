@@ -640,11 +640,10 @@ if (recipeId) {
       flatItems = incomingRecipe.ingredients;
     }
 
-// Insert into active store
-const store = dataModel.stores.find(s => s.id === dataModel.activeStoreId);
-if (store) {
+// MULTI-STORE IMPORT OPTION
+dataModel.stores.forEach(store => {
 
-  // Ensure a "Recipe Imports" category exists
+  // Ensure a "Recipe Imports" category exists in each store
   let recipeCat = store.categories.find(c => c.name === "Recipe Imports");
   if (!recipeCat) {
     recipeCat = {
@@ -655,7 +654,7 @@ if (store) {
     store.categories.push(recipeCat);
   }
 
-  // Insert each ingredient as an item inside the category
+  // Insert each ingredient into each store
   flatItems.forEach(item => {
     recipeCat.children.push({
       id: uid("item"),
@@ -668,9 +667,11 @@ if (store) {
       children: []
     });
   });
+});
 
-  saveModel();
-  render();
+saveModel();
+render();
+
 	}
 
   }
