@@ -1165,34 +1165,7 @@ function render(){
   container.appendChild(ul);
 }
 
-
-      const name = document.createElement("div");
-      name.style.color = (entry.level === 3) ? "" : entry.color;
-      const span = document.createElement("span");
-      span.innerText = entry.node.name || "(unnamed)";
-      if (entry.level === 3) span.classList.add("name-kind");
-      if (entry.level === 4) span.classList.add("name-subkind");
-      name.appendChild(span);
-
-      const meta = document.createElement("div");
-      meta.className = "match-meta";
-      const aisleBadge = document.createElement("div");
-      aisleBadge.className = "aisle-badge";
-      aisleBadge.innerText = entry.aisle || "Aisle";
-      meta.innerText = `${entry.levelLabel} • ${entry.categoryName}`;
-      meta.appendChild(aisleBadge);
-
-      li.appendChild(name);
-      li.appendChild(meta);
-      ul.appendChild(li);
-    });
-
-    root.appendChild(ul);
-    if (typeof refreshAisleColumn === "function") refreshAisleColumn();
-    return;
-  }
-
-  /* =========================
+     /* =========================
      NORMAL HIERARCHICAL VIEW
      ========================= */
   store.categories.forEach((cat, idx) => {
