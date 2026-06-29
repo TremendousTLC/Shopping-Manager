@@ -1800,12 +1800,12 @@ document.getElementById("propagateAislesBtn").addEventListener("click", () => {
 });
 
 function findExistingItemUniversal(store, name) {
-  name = name.toLowerCase();
+  const target = normalizeName(name);
   let found = null;
 
   store.categories.forEach(cat => {
     walkNodes(cat, node => {
-      if (node.name && node.name.toLowerCase() === name) {
+      if (node.name && normalizeName(node.name) === target) {
         found = node;
       }
     });
@@ -1843,6 +1843,16 @@ function walkNodes(node, callback) {
     });
   }
 }
+
+function normalizeName(str) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/peppers?$/, "pepper")
+    .trim();
+}
+
 
 /* =========================
    Import
