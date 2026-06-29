@@ -735,22 +735,34 @@ dataModel.stores.forEach(store => {
     recipeCat = {
       id: uid("cat"),
       name: "Recipe Imports",
-      children: []
+      collapsed: false,
+      subcategories: []
     };
     store.categories.push(recipeCat);
   }
 
-  // Insert each ingredient into each store
+  // Ensure an "Ingredients" subcategory exists
+  let sub = recipeCat.subcategories.find(s => s.name === "Ingredients");
+  if (!sub) {
+    sub = {
+      id: uid("sub"),
+      name: "Ingredients",
+      collapsed: false,
+      items: []
+    };
+    recipeCat.subcategories.push(sub);
+  }
+
+  // Insert each ingredient into the correct items array
   flatItems.forEach(item => {
-    recipeCat.children.push({
+    sub.items.push({
       id: uid("item"),
       name: item.name || "",
       qty: item.qty || "",
       unit: item.unit || "",
       prep: item.prep || "",
       aisle: "",
-      checked: true,
-      children: []
+      checked: true
     });
   });
 });
