@@ -754,47 +754,48 @@ dataModel.stores.forEach(store => {
   }
 
   // Insert each ingredient into the correct items array
-flatItems.forEach(item => {
+  flatItems.forEach(item => {
 
-  // Try to find an existing item in the store
-  let existingItem = null;
+    // Try to find an existing item in the store
+    let existingItem = null;
 
-  store.categories.forEach(cat => {
-    cat.subcategories?.forEach(sub => {
-      sub.items?.forEach(it => {
-        if (it.name.toLowerCase() === item.name.toLowerCase()) {
-          existingItem = it;
-        }
+    store.categories.forEach(cat => {
+      cat.subcategories?.forEach(subcat => {
+        subcat.items?.forEach(it => {
+          if (it.name.toLowerCase() === item.name.toLowerCase()) {
+            existingItem = it;
+          }
+        });
       });
     });
+
+    if (existingItem) {
+      // ⭐ Item already exists in store → reuse it
+      sub.items.push({
+        id: uid("item"),
+        name: existingItem.name,
+        qty: item.qty || "",
+        unit: item.unit || "",
+        prep: item.prep || "",
+        aisle: existingItem.aisle,
+        checked: true
+      });
+    } else {
+      // ⭐ Item does NOT exist → add new one
+      sub.items.push({
+        id: uid("item"),
+        name: item.name || "",
+        qty: item.qty || "",
+        unit: item.unit || "",
+        prep: item.prep || "",
+        aisle: "",
+        checked: true
+      });
+    }
+
   });
 
-  if (existingItem) {
-    // ⭐ Item already exists in store → reuse it
-    sub.items.push({
-      id: uid("item"),
-      name: existingItem.name,
-      qty: item.qty || "",
-      unit: item.unit || "",
-      prep: item.prep || "",
-      aisle: existingItem.aisle,     // ⭐ keep aisle
-      checked: true                  // ⭐ always checked
-    });
-  } else {
-    // ⭐ Item does NOT exist → add new one
-    sub.items.push({
-      id: uid("item"),
-      name: item.name || "",
-      qty: item.qty || "",
-      unit: item.unit || "",
-      prep: item.prep || "",
-      aisle: "",                     // ⭐ you assign aisle later
-      checked: true                  // ⭐ always checked
-    });
-  }
-
 });
-
 
 saveModel();
 render();
