@@ -634,24 +634,39 @@ if (recipeId) {
       flatItems = incomingRecipe.ingredients;
     }
 
-    // Insert into active store
-    const store = dataModel.stores.find(s => s.id === dataModel.activeStoreId);
-    if (store) {
-      flatItems.forEach(item => {
-        store.categories.push({
-          id: uid("item"),
-          name: item.name || "",
-          qty: item.qty || "",
-          unit: item.unit || "",
-          prep: item.prep || "",
-          aisle: "",
-          checked: false
-        });
-      });
+// Insert into active store
+const store = dataModel.stores.find(s => s.id === dataModel.activeStoreId);
+if (store) {
 
-      saveModel();
-	  render();
-    }
+  // Ensure a "Recipe Imports" category exists
+  let recipeCat = store.categories.find(c => c.name === "Recipe Imports");
+  if (!recipeCat) {
+    recipeCat = {
+      id: uid("cat"),
+      name: "Recipe Imports",
+      children: []
+    };
+    store.categories.push(recipeCat);
+  }
+
+  // Insert each ingredient as an item inside the category
+  flatItems.forEach(item => {
+    recipeCat.children.push({
+      id: uid("item"),
+      name: item.name || "",
+      qty: item.qty || "",
+      unit: item.unit || "",
+      prep: item.prep || "",
+      aisle: "",
+      checked: false,
+      children: []
+    });
+  });
+
+  saveModel();
+  render();
+	}
+
   }
 }
 
