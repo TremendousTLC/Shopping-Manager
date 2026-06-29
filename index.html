@@ -673,9 +673,9 @@ function saveModel(){
   catch(e){ console.warn("save failed", e); } 
 }
 
-loadModel();   // ⭐ MUST happen BEFORE importing recipe ingredients
+loadModel();   // MUST happen BEFORE importing recipe ingredients
 
-// 4️⃣ ⭐ NOW import recipe ingredients (correct placement)
+// Import recipe ingredients
 let incomingRecipe = null;
 
 if (recipeId) {
@@ -695,112 +695,82 @@ if (recipeId) {
     } else {
       flatItems = incomingRecipe.ingredients;
     }
-	
-// 5️⃣ Insert imported ingredients into a new category
-  const store = dataModel.stores.find(s => s.id === dataModel.activeStoreId);
-  if (store) {
-    const importCat = {
-      id: uid("cat"),
-      name: incomingRecipe.name || "Imported Recipe",
-      color: "#FF6B6B",
-      collapsed: false,
-      subcategories: [
-        {
+
+    // MULTI-STORE IMPORT OPTION
+    dataModel.stores.forEach(store => {
+
+      // Ensure a "Recipe Imports" category exists in each store
+      let recipeCat = store.categories.find(c => c.name === "Recipe Imports");
+      if (!recipeCat) {
+        recipeCat = {
+          id: uid("cat"),
+          name: "Recipe Imports",
+          collapsed: false,
+          subcategories: []
+        };
+        store.categories.push(recipeCat);
+      }
+
+      // Ensure an "Ingredients" subcategory exists
+      let sub = recipeCat.subcategories.find(s => s.name === "Ingredients");
+      if (!sub) {
+        sub = {
           id: uid("sub"),
           name: "Ingredients",
           collapsed: false,
-          items: flatItems.map(it => ({
-            id: uid("item"),
-            name: it.name,
-            qty: it.qty || "",
-            unit: it.unit || "",
-            prep: it.prep || "",
-            checked: false
-          }))
-        }
-      ]
-    };
+          items: []
+        };
+        recipeCat.subcategories.push(sub);
+      }
 
-    store.categories.push(importCat);
-    saveModel();
-  }
+      // Insert each ingredient into the correct items array
+      flatItems.forEach(item => {
 
-}
+        // Try to find an existing item in the store
+        let existingItem = null;
 
-
-// MULTI-STORE IMPORT OPTION
-dataModel.stores.forEach(store => {
-
-  // Ensure a "Recipe Imports" category exists in each store
-  let recipeCat = store.categories.find(c => c.name === "Recipe Imports");
-  if (!recipeCat) {
-    recipeCat = {
-      id: uid("cat"),
-      name: "Recipe Imports",
-      collapsed: false,
-      subcategories: []
-    };
-    store.categories.push(recipeCat);
-  }
-
-  // Ensure an "Ingredients" subcategory exists
-  let sub = recipeCat.subcategories.find(s => s.name === "Ingredients");
-  if (!sub) {
-    sub = {
-      id: uid("sub"),
-      name: "Ingredients",
-      collapsed: false,
-      items: []
-    };
-    recipeCat.subcategories.push(sub);
-  }
-
-  // Insert each ingredient into the correct items array
-  flatItems.forEach(item => {
-
-    // Try to find an existing item in the store
-    let existingItem = null;
-
-    store.categories.forEach(cat => {
-      cat.subcategories?.forEach(subcat => {
-        subcat.items?.forEach(it => {
-          if (it.name.toLowerCase() === item.name.toLowerCase()) {
-            existingItem = it;
-          }
+        store.categories.forEach(cat => {
+          cat.subcategories?.forEach(subcat => {
+            subcat.items?.forEach(it => {
+              if (it.name.toLowerCase() === item.name.toLowerCase()) {
+                existingItem = it;
+              }
+            });
+          });
         });
+
+        if (existingItem) {
+          // Item already exists in store → reuse it
+          sub.items.push({
+            id: uid("item"),
+            name: existingItem.name,
+            qty: item.qty || "",
+            unit: item.unit || "",
+            prep: item.prep || "",
+            aisle: existingItem.aisle,
+            checked: true
+          });
+        } else {
+          // Item does NOT exist → add new one
+          sub.items.push({
+            id: uid("item"),
+            name: item.name || "",
+            qty: item.qty || "",
+            unit: item.unit || "",
+            prep: item.prep || "",
+            aisle: "",
+            checked: true
+          });
+        }
+
       });
-    });
 
-    if (existingItem) {
-      // ⭐ Item already exists in store → reuse it
-      sub.items.push({
-        id: uid("item"),
-        name: existingItem.name,
-        qty: item.qty || "",
-        unit: item.unit || "",
-        prep: item.prep || "",
-        aisle: existingItem.aisle,
-        checked: true
-      });
-    } else {
-      // ⭐ Item does NOT exist → add new one
-      sub.items.push({
-        id: uid("item"),
-        name: item.name || "",
-        qty: item.qty || "",
-        unit: item.unit || "",
-        prep: item.prep || "",
-        aisle: "",
-        checked: true
-      });
-    }
+    }); // closes dataModel.stores.forEach
 
-  });
-
-});
-
-saveModel();
-render();
+    saveModel();
+    render();
+  } // closes if (incomingRecipe)
+} // closes if (recipeId)
 
 const aisleOptions =
   '<option value=""></option>' +
@@ -816,7 +786,9 @@ const aisleOptions =
   '<option value="J20-Back">J20-Back</option>' +
   Array.from({length:35}, (_,i) => `<option value="G${i+1}">G${i+1}</option>`).join('');
 
-function getActiveStore(){ return dataModel.stores.find(s => s.id === dataModel.activeStoreId) || null; }
+function getActiveStore(){
+  return dataModel.stores.find(s => s.id === dataModel.activeStoreId) || null;
+}
 
 function normalizeStore(store){
   if (!store.categories) store.categories = [];
