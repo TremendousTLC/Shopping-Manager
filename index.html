@@ -623,7 +623,7 @@ loadModel();   // ⭐ MUST happen BEFORE importing recipe ingredients
 let incomingRecipe = null;
 
 if (recipeId) {
-  const recipes = JSON.parse(localStorage.getItem("recipes") || "[]");
+  const recipes = JSON.parse(localStorage.getItem("rcp_recipes") || "[]");
   incomingRecipe = recipes.find(r => r.id === recipeId);
 
   if (incomingRecipe) {
