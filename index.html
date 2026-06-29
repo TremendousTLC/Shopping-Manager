@@ -741,8 +741,7 @@ if (recipeId) {
       flatItems.forEach(item => {
 
         // Try to find an existing item in the store
-		let existingItem = findExistingItemDeep(store, item.name);
-
+		let existingItem = findExistingItemUniversal(store, item.name);
 
         if (existingItem) {
           // Item already exists in store → reuse it
@@ -941,76 +940,43 @@ function countChildrenForNode(node, level){
 function setSearchQuery(q){ searchQuery = (q || "").trim().toLowerCase(); }
 function nodeNameMatches(node){ if (!node || !node.name) return false; return node.name.toLowerCase().includes(searchQuery); }
 
-function collectAllMatchingNodes(store){
+function collectAllMatchingNodes(store) {
   const out = [];
   if (!store || !store.categories) return out;
+
   store.categories.forEach((cat, cidx) => {
     const color = CATEGORY_COLORS[cidx % CATEGORY_COLORS.length];
     const catName = cat.name || "Category";
 
-    if (!searchQuery || nodeNameMatches(cat)) out.push({
-      node: cat,
-      level: 0,
-      levelLabel: "Category",
-      categoryName: catName,
-      color,
-      aisle: getAisleForNode(store, cat.id)
-    });
-
-    if (Array.isArray(cat.subcategories)) {
-      cat.subcategories.forEach(sub => {
-        if (!searchQuery || nodeNameMatches(sub)) out.push({
-          node: sub,
-          level: 1,
-          levelLabel: "Subcategory",
-          categoryName: catName,
-          color,
-          aisle: getAisleForNode(store, sub.id)
-        });
-
-        if (Array.isArray(sub.items)) {
-          sub.items.forEach(it => {
-            if (!searchQuery || nodeNameMatches(it)) out.push({
-              node: it,
-              level: 2,
-              levelLabel: "Item",
-              categoryName: catName,
-              color,
-              aisle: getAisleForNode(store, it.id)
-            });
-
-            if (Array.isArray(it.kinds)) {
-              it.kinds.forEach(k => {
-                if (!searchQuery || nodeNameMatches(k)) out.push({
-                  node: k,
-                  level: 3,
-                  levelLabel: "Kind",
-                  categoryName: catName,
-                  color,
-                  aisle: getAisleForNode(store, k.id)
-                });
-
-                if (Array.isArray(k.subkinds)) {
-                  k.subkinds.forEach(sk => {
-                    if (!searchQuery || nodeNameMatches(sk)) out.push({
-                      node: sk,
-                      level: 4,
-                      levelLabel: "Subkind",
-                      categoryName: catName,
-                      color,
-                      aisle: getAisleForNode(store, sk.id)
-                    });
-                  });
-                }
-              });
-            }
-          });
-        }
+    // Always include the category itself
+    if (!searchQuery || nodeNameMatches(cat)) {
+      out.push({
+        node: cat,
+        level: 0,
+        levelLabel: "Category",
+        categoryName: catName,
+        color,
+        aisle: getAisleForNode(store, cat.id)
       });
     }
+
+    // Walk everything under this category
+    walkNodes(cat, node => {
+      if (!node || !node.name) return;
+
+      if (!searchQuery || nodeNameMatches(node)) {
+        out.push({
+          node,
+          level: node.level || 1,
+          levelLabel: node.levelLabel || "Node",
+          categoryName: catName,
+          color,
+          aisle: getAisleForNode(store, node.id)
+        });
+      }
+    });
   });
 
-  if (searchQuery) return out.filter(e => nodeNameMatches(e.node));
   return out;
 }
 
@@ -1165,6 +1131,40 @@ function render(){
         spacer.style.width = "18px";
         li.appendChild(spacer);
       }
+
+    // Node name
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "flat-name";
+    nameSpan.textContent = entry.node.name || "(unnamed)";
+    li.appendChild(nameSpan);
+
+    // Level label (Category, Subcategory, Item, Kind, Subkind)
+    const levelSpan = document.createElement("span");
+    levelSpan.className = "flat-level";
+    levelSpan.textContent = entry.levelLabel || "Node";
+    li.appendChild(levelSpan);
+
+    // Category name
+    const catSpan = document.createElement("span");
+    catSpan.className = "flat-category";
+    catSpan.textContent = entry.categoryName || "";
+    li.appendChild(catSpan);
+
+    // Aisle
+    const aisleSpan = document.createElement("span");
+    aisleSpan.className = "flat-aisle";
+    aisleSpan.textContent = entry.aisle ? `Aisle: ${entry.aisle}` : "";
+    li.appendChild(aisleSpan);
+
+    ul.appendChild(li);
+  });
+
+  // Replace your old container append with this:
+  const container = document.getElementById("searchResults");
+  container.innerHTML = "";
+  container.appendChild(ul);
+}
+
 
       const name = document.createElement("div");
       name.style.color = (entry.level === 3) ? "" : entry.color;
@@ -1826,37 +1826,50 @@ document.getElementById("propagateAislesBtn").addEventListener("click", () => {
   alert("Propagation complete. Nodes updated: " + changes);
 });
 
-function findExistingItemDeep(store, name) {
+function findExistingItemUniversal(store, name) {
   name = name.toLowerCase();
+  let found = null;
 
-  function searchNode(node) {
-    // Items directly under this node
-    if (node.items) {
-      for (const it of node.items) {
-        if (it.name.toLowerCase() === name) return it;
+  store.categories.forEach(cat => {
+    walkNodes(cat, node => {
+      if (node.name && node.name.toLowerCase() === name) {
+        found = node;
       }
-    }
+    });
+  });
 
-    // Recurse into subcategories
-    if (node.subcategories) {
-      for (const sub of node.subcategories) {
-        const found = searchNode(sub);
-        if (found) return found;
-      }
-    }
-
-    return null;
-  }
-
-  // Search all top-level categories
-  for (const cat of store.categories) {
-    const found = searchNode(cat);
-    if (found) return found;
-  }
-
-  return null;
+  return found;
 }
 
+function walkNodes(node, callback) {
+  if (!node || typeof node !== "object") return;
+
+  // Items directly under this node
+  if (node.items) {
+    node.items.forEach(item => callback(item));
+  }
+
+  // Subcategories
+  if (node.subcategories) {
+    node.subcategories.forEach(sub => walkNodes(sub, callback));
+  }
+
+  // Kinds
+  if (node.kinds) {
+    node.kinds.forEach(kind => {
+      callback(kind);
+      walkNodes(kind, callback);
+    });
+  }
+
+  // Subkinds
+  if (node.subkinds) {
+    node.subkinds.forEach(sk => {
+      callback(sk);
+      walkNodes(sk, callback);
+    });
+  }
+}
 
 /* =========================
    Import
