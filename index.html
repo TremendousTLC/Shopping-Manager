@@ -598,6 +598,20 @@ const CATEGORY_COLORS = [
   "#FF8FAB", "#00C2A8", "#FFB86B", "#7BE495", "#A0E7E5"
 ];
 
+const aisleOptions =
+  '<option value=""></option>' +
+  '<option value="">Aisle</option>' +
+  Array.from({length:28}, (_,i) => `<option value="${i+1}">${i+1}</option>`).join('') +
+  '<option value="front">Front</option>' +
+  '<option value="dairy">Dairy</option>' +
+  '<option value="back">Back</option>' +
+  '<option value="deli">Deli</option>' +
+  '<option value="left">Left</option>' +
+  '<option value="right">Right</option>' +
+  Array.from({length:19}, (_,i) => `<option value="J${i+1}">J${i+1}</option>`).join('') +
+  '<option value="J20-Back">J20-Back</option>' +
+  Array.from({length:35}, (_,i) => `<option value="G${i+1}">G${i+1}</option>`).join('');
+
 /* ---------------------------------------------------------
    INITIALIZE DEFAULT STORES AND CATEGORIES IF EMPTY
 --------------------------------------------------------- */
@@ -771,20 +785,6 @@ if (recipeId) {
     render();
   } // closes if (incomingRecipe)
 } // closes if (recipeId)
-
-const aisleOptions =
-  '<option value=""></option>' +
-  '<option value="">Aisle</option>' +
-  Array.from({length:28}, (_,i) => `<option value="${i+1}">${i+1}</option>`).join('') +
-  '<option value="front">Front</option>' +
-  '<option value="dairy">Dairy</option>' +
-  '<option value="back">Back</option>' +
-  '<option value="deli">Deli</option>' +
-  '<option value="left">Left</option>' +
-  '<option value="right">Right</option>' +
-  Array.from({length:19}, (_,i) => `<option value="J${i+1}">J${i+1}</option>`).join('') +
-  '<option value="J20-Back">J20-Back</option>' +
-  Array.from({length:35}, (_,i) => `<option value="G${i+1}">G${i+1}</option>`).join('');
 
 function getActiveStore(){
   return dataModel.stores.find(s => s.id === dataModel.activeStoreId) || null;
