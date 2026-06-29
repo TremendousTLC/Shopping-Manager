@@ -590,6 +590,54 @@ const CATEGORY_COLORS = [
   "#FF8FAB", "#00C2A8", "#FFB86B", "#7BE495", "#A0E7E5"
 ];
 
+/* ---------------------------------------------------------
+   INITIALIZE DEFAULT STORES AND CATEGORIES IF EMPTY
+--------------------------------------------------------- */
+if (!localStorage.getItem("sm_stores")) {
+    localStorage.setItem("sm_stores", JSON.stringify([
+        "Walmart",
+        "Twin Oaks",
+        "Home Depot",
+        "Sam's",
+        "Tractor Supply",
+        "Kroger",
+        "Braum's",
+        "Albertson's",
+        "H.E.B.",
+        "Brookshire's",
+        "Dollar General"
+    ]));
+}
+
+if (!localStorage.getItem("sm_categories")) {
+    localStorage.setItem("sm_categories", JSON.stringify([
+        "Baked Goods",
+        "Produce",
+        "Pantry Items",
+        "Beverages",
+        "Breakfast meats",
+        "Dairy",
+        "Refrigerated Items",
+        "Deli Counter",
+        "Fresh Meats",
+        "Frozen Foods",
+        "Paper Supplies",
+        "Cleaning Supplies",
+        "Pet Supplies",
+        "Personal Care",
+        "Kitchen",
+        "Bath",
+        "Electronics",
+        "Clothing",
+        "Automotive",
+        "Tools",
+        "Lawn & Garden"
+    ]));
+}
+
+if (!localStorage.getItem("sm_items")) {
+    localStorage.setItem("sm_items", JSON.stringify([]));
+}
 
 function uid(prefix="id"){ 
   return prefix + "_" + Math.random().toString(36).slice(2,10); 
