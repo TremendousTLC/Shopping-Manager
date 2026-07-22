@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 24</title>
+  <title>Shopping List 25</title>
 
   <style>
 .store-title {
@@ -1169,10 +1169,15 @@ function render(){
   const root = document.getElementById("rootList");
   root.innerHTML = "";
 
-  /* =========================
-     CHECKED-ONLY VIEW
-     ========================= */
-  if (showCheckedOnlyView) {
+/* =========================
+   CHECKED-ONLY VIEW
+   ========================= */
+if (showCheckedOnlyView) {
+
+    // Hide search results so checked-only view doesn't duplicate items
+    const searchResults = document.getElementById("searchResults");
+    if (searchResults) searchResults.style.display = "none";
+
     const flat = collectCheckedNodes(store).filter(entry => {
       if (!searchQuery) return true;
       return (entry.node.name || "").toLowerCase().includes(searchQuery);
@@ -1199,8 +1204,14 @@ function render(){
       showAllBtn.innerText = "Show All Items";
       showAllBtn.addEventListener("click", () => {
         showCheckedOnlyView = false;
+
+        // Restore toggle button text
         const toggleBtn = document.getElementById("toggle-checked-action");
         if (toggleBtn) toggleBtn.innerText = "Show Only Checkmarked Items";
+
+        // Restore search results visibility
+        if (searchResults) searchResults.style.display = "";
+
         render();
       });
 
@@ -1249,9 +1260,10 @@ function render(){
     });
 
     root.appendChild(ul);
+
     if (typeof refreshAisleColumn === "function") refreshAisleColumn();
     return;
-  }
+}
 
 /* =========================
    SEARCH VIEW (>= 3 chars)
