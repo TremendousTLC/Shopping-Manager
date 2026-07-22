@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 23</title>
+  <title>Shopping List 24</title>
 
   <style>
 .store-title {
@@ -351,6 +351,22 @@ body { background:var(--bg);
 .row-0 {
    justify-content: flex-start;
    gap: 8px; }
+   
+.toolbar-row,
+.toolbar-search-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.toolbar-search-row input.search {
+  flex: 1;
+}
+
+#clearSearchBtn {
+  white-space: nowrap;
+}
 
 .aisle-wrapper,
 .aisle-select {
@@ -487,47 +503,60 @@ body { background:var(--bg);
 <body>
   <div class="app-wrap panel" id="shopping-app">
 
-    <div class="toolbar">
+<div class="toolbar">
 
-      <div class="toolbar-top">
-        <div class="store-title">Shopping List</div>
-        <select id="storeSelect" class="store-select"></select>
-        <button class="btn small" id="btn-add-store">+</button>
-        <button class="btn small" id="btn-rename-store">Rename</button>
-        <button class="btn small danger" id="btn-delete-store">Delete Store</button>
-        <button class="btn small danger" id="btn-delete-all-items">Delete Items</button>
-      </div>
+  <!-- TITLE ROW -->
+  <div class="toolbar-top">
+    <div class="store-title">Shopping List</div>
+  </div>
 
-      <div class="toolbar-actions">
+  <!-- ROW 1: Store Controls -->
+  <div class="toolbar-row">
+    <select id="storeSelect" class="store-select"></select>
+    <button class="btn small" id="btn-add-store">+</button>
+    <button class="btn small" id="btn-rename-store">Rename</button>
+  </div>
 
-        <!-- ROW 0 -->
-        <div class="actions-row row-0">
-          <label class="btn" for="file-input" id="import-label">Import</label>
-          <input id="file-input" type="file" accept=".json">
-          <button class="btn" id="btn-export">Export</button>
-          <button id="clear-aisles-btn" class="btn danger small">Clear Aisles</button>
-        </div>
+  <!-- ROW 2: Delete Controls -->
+  <div class="toolbar-row">
+    <button class="btn small danger" id="btn-delete-store">Delete Store</button>
+    <button class="btn small danger" id="btn-delete-all-items">Delete Items</button>
+  </div>
 
-        <!-- ROW 1 -->
-        <div class="actions-row row-1">
-          <button class="btn secondary" id="btn-collapse-all">Collapse All</button>
-          <button class="btn secondary" id="btn-expand-all">Expand All</button>
-          <button class="btn" id="btn-add-category">Add Category</button>
-          <button class="btn" id="propagateAislesBtn">Prop</button>
-        </div>
+  <!-- ROW 3: Prop + Clear Aisles -->
+  <div class="toolbar-row">
+    <button class="btn" id="propagateAislesBtn">Prop</button>
+    <button id="clear-aisles-btn" class="btn danger small">Clear Aisles</button>
+  </div>
 
-        <!-- ROW 2 -->
-        <div class="actions-row row-2">
-          <button class="toggle" id="toggle-checked-action">Show Only Checkmarked Items</button>
-          <button class="btn clear" id="btn-clear-checkmarks">Clear All Checkmarks</button>
-        </div>
-      </div>
+  <!-- ROW 4: Import / Export -->
+  <div class="toolbar-row">
+    <label class="btn" for="file-input" id="import-label">Import</label>
+    <input id="file-input" type="file" accept=".json">
+    <button class="btn" id="btn-export">Export</button>
+  </div>
 
-      <div class="toolbar-search-row">
-        <input id="searchInput" class="search" placeholder="Search items..." />
-      </div>
-    </div>
-	
+  <!-- ROW 5: Category Structure -->
+  <div class="toolbar-row">
+    <button class="btn secondary" id="btn-collapse-all">Collapse All</button>
+    <button class="btn secondary" id="btn-expand-all">Expand All</button>
+    <button class="btn" id="btn-add-category">Add Category</button>
+  </div>
+
+  <!-- ROW 6: Checkmark Tools -->
+  <div class="toolbar-row">
+    <button class="toggle" id="toggle-checked-action">Show Only Checkmarked Items</button>
+    <button class="btn clear" id="btn-clear-checkmarks">Clear All Checkmarks</button>
+  </div>
+
+  <!-- ROW 7: Search + Clear Search -->
+  <div class="toolbar-search-row">
+    <input id="searchInput" class="search" placeholder="Search items..." />
+    <button id="clearSearchBtn" class="btn small">Clear</button>
+  </div>
+
+</div>
+
 	<div id="searchResults"></div>
 
 
@@ -1043,6 +1072,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInput");
     if (!searchInput) return;
 
+    // SEARCH INPUT HANDLER
     searchInput.addEventListener("input", (e) => {
         setSearchQuery(e.target.value);
 
@@ -1059,7 +1089,19 @@ document.addEventListener("DOMContentLoaded", () => {
         // RUN SEARCH
         render();
     });
+
+    // CLEAR SEARCH BUTTON HANDLER
+    const clearSearchBtn = document.getElementById("clearSearchBtn");
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener("click", () => {
+            setSearchQuery("");
+            searchInput.value = "";
+            document.getElementById("searchResults").innerHTML = "";
+            render(); // instantly restore full list
+        });
+    }
 });
+
 
 // =========================
 // Search input wiring
