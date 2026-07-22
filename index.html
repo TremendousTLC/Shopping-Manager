@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 1</title>
+  <title>Shopping List 2</title>
 
   <style>
 .store-title {
@@ -937,16 +937,25 @@ function countChildrenForNode(node, level){
    Search helpers
    ========================= */
 
-function setSearchQuery(q){ searchQuery = (q || "").trim().toLowerCase(); }
-function nodeNameMatches(node){ if (!node || !node.name) return false; return node.name.toLowerCase().includes(searchQuery); }
+let searchQuery = "";
 
+// 1. Store the search text
+function setSearchQuery(q){
+  searchQuery = (q || "").trim().toLowerCase();
+}
+
+// 2. Check if a node name matches the search
+function nodeNameMatches(node){
+  if (!node || !node.name) return false;
+  return node.name.toLowerCase().includes(searchQuery);
+}
+
+// 3. Full recursive walker (categories → subcategories → items → kinds → subkinds)
 function walkNodes(node, callback) {
     if (!node) return;
 
-    // Call callback on this node
     callback(node);
 
-    // Subcategories
     if (Array.isArray(node.subcategories)) {
         node.subcategories.forEach(sub => {
             sub.level = 1;
@@ -955,7 +964,6 @@ function walkNodes(node, callback) {
         });
     }
 
-    // Items
     if (Array.isArray(node.items)) {
         node.items.forEach(item => {
             item.level = 2;
@@ -964,7 +972,6 @@ function walkNodes(node, callback) {
         });
     }
 
-    // Kinds
     if (Array.isArray(node.kinds)) {
         node.kinds.forEach(kind => {
             kind.level = 3;
@@ -973,7 +980,6 @@ function walkNodes(node, callback) {
         });
     }
 
-    // Subkinds
     if (Array.isArray(node.subkinds)) {
         node.subkinds.forEach(subkind => {
             subkind.level = 4;
@@ -983,6 +989,7 @@ function walkNodes(node, callback) {
     }
 }
 
+// 4. Collect all nodes that match the search
 function collectAllMatchingNodes(store) {
   const out = [];
   if (!store || !store.categories) return out;
@@ -1022,6 +1029,19 @@ function collectAllMatchingNodes(store) {
 
   return out;
 }
+
+// 5. SEARCH INPUT HANDLER — THIS WAS THE MISSING PIECE
+const searchInput = document.getElementById("searchBox");
+
+searchInput.addEventListener("input", () => {
+    setSearchQuery(searchInput.value);
+
+    const store = getActiveStore();
+    if (!store) return;
+
+    const results = collectAllMatchingNodes(store);
+    renderSearchResults(results);
+});
 
 document.getElementById("clear-aisles-btn").addEventListener("click", () => {
   if (!confirm("Clear ALL aisle assignments for this store?")) return;
