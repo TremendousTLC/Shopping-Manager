@@ -940,6 +940,49 @@ function countChildrenForNode(node, level){
 function setSearchQuery(q){ searchQuery = (q || "").trim().toLowerCase(); }
 function nodeNameMatches(node){ if (!node || !node.name) return false; return node.name.toLowerCase().includes(searchQuery); }
 
+function walkNodes(node, callback) {
+    if (!node) return;
+
+    // Call callback on this node
+    callback(node);
+
+    // Subcategories
+    if (Array.isArray(node.subcategories)) {
+        node.subcategories.forEach(sub => {
+            sub.level = 1;
+            sub.levelLabel = "Subcategory";
+            walkNodes(sub, callback);
+        });
+    }
+
+    // Items
+    if (Array.isArray(node.items)) {
+        node.items.forEach(item => {
+            item.level = 2;
+            item.levelLabel = "Item";
+            walkNodes(item, callback);
+        });
+    }
+
+    // Kinds
+    if (Array.isArray(node.kinds)) {
+        node.kinds.forEach(kind => {
+            kind.level = 3;
+            kind.levelLabel = "Kind";
+            walkNodes(kind, callback);
+        });
+    }
+
+    // Subkinds
+    if (Array.isArray(node.subkinds)) {
+        node.subkinds.forEach(subkind => {
+            subkind.level = 4;
+            subkind.levelLabel = "Subkind";
+            walkNodes(subkind, callback);
+        });
+    }
+}
+
 function collectAllMatchingNodes(store) {
   const out = [];
   if (!store || !store.categories) return out;
