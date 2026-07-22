@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 8</title>
+  <title>Shopping List 9</title>
 
   <style>
 .store-title {
@@ -1028,17 +1028,25 @@ function collectAllMatchingNodes(store) {
   return out;
 }
 
-// 5. SEARCH INPUT HANDLER — THIS WAS THE MISSING PIECE
-const searchInput = document.getElementById("searchInput");
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchInput");
+    if (!searchInput) return;
 
-searchInput.addEventListener("input", () => {
-    setSearchQuery(searchInput.value);
+    searchInput.addEventListener("input", (e) => {
+        setSearchQuery(e.target.value);
 
-    const store = getActiveStore();
-    if (!store) return;
+        const store = getActiveStore();
+        if (!store) return;
 
-    const results = collectAllMatchingNodes(store);
-    renderSearchResults(results);
+        // If search is empty, show full store
+        if (!searchQuery) {
+            render();
+            return;
+        }
+
+        // TEMP: Just re-render the full store until we build search results
+        render();
+    });
 });
 
 // =========================
