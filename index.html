@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 11</title>
+  <title>Shopping List 12</title>
 
   <style>
 .store-title {
@@ -1206,8 +1206,9 @@ function render(){
      SEARCH VIEW
      ========================= */
   if (searchQuery) {
-    const matches = collectAllMatchingNodes(store);
-	  .filter(entry => entry.node.type !== "category");
+    const matches = collectAllMatchingNodes(store)
+  .filter(entry => entry.node.type !== "category");
+
 	
     const ul = document.createElement("ul");
     ul.className = "flat-checked-list";
