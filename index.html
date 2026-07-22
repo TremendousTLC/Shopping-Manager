@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 7</title>
+  <title>Shopping List 8</title>
 
   <style>
 .store-title {
@@ -1047,7 +1047,7 @@ searchInput.addEventListener("input", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInput");
-    if (!searchInput) return; // prevents crash if element missing
+    if (!searchInput) return;
 
     searchInput.addEventListener("input", (e) => {
         setSearchQuery(e.target.value);
@@ -1055,16 +1055,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const store = getActiveStore();
         if (!store) return;
 
-        // If search is empty, show full store again
+        // If search is empty, show full store
         if (!searchQuery) {
             render();
             return;
         }
 
-        const results = collectAllMatchingNodes(store);
-        renderSearchResults(results);
+        // TEMP: Just re-render the full store until we build search results
+        render();
     });
 });
+
 
 document.getElementById("clear-aisles-btn").addEventListener("click", () => {
   if (!confirm("Clear ALL aisle assignments for this store?")) return;
