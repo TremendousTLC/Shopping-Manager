@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 22</title>
+  <title>Shopping List 23</title>
 
   <style>
 .store-title {
@@ -1235,10 +1235,18 @@ if (searchQuery && searchQuery.length >= 3) {
     );
 
     sortedCats.forEach(catName => {
-        // CATEGORY HEADER
+        /* =========================
+           CATEGORY HEADER (centered)
+           ========================= */
         const catHeader = document.createElement("div");
         catHeader.className = "category-header";
         catHeader.textContent = catName;
+        catHeader.style.textAlign = "center";
+        catHeader.style.fontWeight = "600";
+        catHeader.style.fontSize = "20px";
+        catHeader.style.margin = "20px 0 10px 0";
+        catHeader.style.borderBottom = "2px solid var(--muted)";
+        catHeader.style.paddingBottom = "6px";
         container.appendChild(catHeader);
 
         // Group items inside category by aisle
@@ -1257,11 +1265,17 @@ if (searchQuery && searchQuery.length >= 3) {
         });
 
         sortedAisles.forEach(aisle => {
-            // AISLE HEADER
+            /* =========================
+               AISLE HEADER (left aligned)
+               ========================= */
             const aisleHeader = document.createElement("div");
             aisleHeader.className = "aisle-header";
             aisleHeader.textContent =
                 aisle === "No Aisle" ? "Misc Items" : `Aisle ${aisle}`;
+            aisleHeader.style.fontWeight = "500";
+            aisleHeader.style.fontSize = "16px";
+            aisleHeader.style.margin = "10px 0 4px 0";
+            aisleHeader.style.color = "var(--muted)";
             container.appendChild(aisleHeader);
 
             // Sort items alphabetically inside aisle
@@ -1275,8 +1289,17 @@ if (searchQuery && searchQuery.length >= 3) {
             items.forEach(entry => {
                 const li = document.createElement("li");
                 li.className = "flat-item";
+                li.style.display = "flex";
+                li.style.alignItems = "center";
+                li.style.justifyContent = "space-between";
+                li.style.padding = "6px 0";
 
-                // Checkbox
+                // Left side: checkbox + name
+                const left = document.createElement("div");
+                left.style.display = "flex";
+                left.style.alignItems = "center";
+                left.style.gap = "10px";
+
                 const chk = document.createElement("input");
                 chk.type = "checkbox";
                 chk.className = "node-checkbox";
@@ -1285,25 +1308,37 @@ if (searchQuery && searchQuery.length >= 3) {
                     entry.node.checked = chk.checked;
                     saveModel();
                 });
-                li.appendChild(chk);
+                left.appendChild(chk);
 
-                // Name
                 const nameSpan = document.createElement("span");
                 nameSpan.className = "flat-name";
                 nameSpan.textContent = entry.node.name || "(unnamed)";
-                li.appendChild(nameSpan);
+                nameSpan.style.fontSize = "15px";
+                left.appendChild(nameSpan);
 
-                // Level label
-                const levelSpan = document.createElement("span");
-                levelSpan.className = "flat-level";
-                levelSpan.textContent = entry.levelLabel || "Node";
-                li.appendChild(levelSpan);
+                li.appendChild(left);
+
+                // Right side: aisle label
+                const aisleSpan = document.createElement("span");
+                aisleSpan.className = "flat-aisle";
+                aisleSpan.textContent =
+                    entry.aisle ? `Aisle ${entry.aisle}` : "";
+                aisleSpan.style.fontSize = "14px";
+                aisleSpan.style.color = "var(--muted)";
+                aisleSpan.style.marginLeft = "20px";
+
+                li.appendChild(aisleSpan);
 
                 ul.appendChild(li);
             });
 
             container.appendChild(ul);
         });
+
+        // Add spacing between categories
+        const spacer = document.createElement("div");
+        spacer.style.height = "25px";
+        container.appendChild(spacer);
     });
 
     return;
