@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 18</title>
+  <title>Shopping List 19</title>
 
   <style>
 .store-title {
@@ -999,9 +999,7 @@ function collectAllMatchingNodes(store) {
     const color = CATEGORY_COLORS[cidx % CATEGORY_COLORS.length];
     const catName = cat.name || "Category";
 
-    /* =========================
-       NORMAL VIEW (no search)
-       ========================= */
+    // NORMAL VIEW ONLY
     if (!searchQuery) {
       out.push({
         node: cat,
@@ -1013,18 +1011,18 @@ function collectAllMatchingNodes(store) {
       });
     }
 
-    /* =========================
-       WALK ALL CHILD NODES
-       ========================= */
+    // WALK CHILDREN
     walkNodes(cat, node => {
       if (!node || !node.name) return;
 
-      // SEARCH MODE: only match if >=2 chars AND name matches
-      if (searchQuery && searchQuery.length >= 2) {
+      // SEARCH MODE ONLY WHEN >= 3 CHARS
+      if (searchQuery && searchQuery.length >= 3) {
         if (!nodeNameMatches(node)) return;
+      } else {
+        return; // do NOT include anything in 1–2 char mode
       }
 
-      // FILTER OUT CATEGORIES IN SEARCH
+      // FILTER OUT CATEGORIES
       if (node.type === "category") return;
 
       out.push({
@@ -1051,14 +1049,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const store = getActiveStore();
         if (!store) return;
 
-        // If search is empty OR less than 2 chars → exit search
-        if (!searchQuery || searchQuery.length < 2) {
+        // EXIT SEARCH WHEN < 3 CHARS
+        if (!searchQuery || searchQuery.length < 3) {
             document.getElementById("searchResults").innerHTML = "";
-            render();   // restore full category view
+            render();
             return;
         }
 
-        // Otherwise run search
+        // RUN SEARCH
         render();
     });
 });
@@ -1213,13 +1211,13 @@ function render(){
     return;
   }
 
-/* =========================
-   SEARCH VIEW
+//* =========================
+   SEARCH VIEW (ONLY >= 3 CHARS)
    ========================= */
-if (searchQuery && searchQuery.length >= 2) {
+if (searchQuery && searchQuery.length >= 3) {
     const matches = collectAllMatchingNodes(store)
       .filter(entry => entry.level !== 0);
-    
+
     const ul = document.createElement("ul");
     ul.className = "flat-checked-list";
 
@@ -1227,21 +1225,15 @@ if (searchQuery && searchQuery.length >= 2) {
       const li = document.createElement("li");
       li.className = "flat-item";
 
-      if (entry.level >= 1) {
-        const chk = document.createElement("input");
-        chk.type = "checkbox";
-        chk.className = "node-checkbox";
-        chk.checked = !!entry.node.checked;
-        chk.addEventListener("change", () => {
-          entry.node.checked = chk.checked;
-          saveModel();
-        });
-        li.appendChild(chk);
-      } else {
-        const spacer = document.createElement("div");
-        spacer.style.width = "18px";
-        li.appendChild(spacer);
-      }
+      const chk = document.createElement("input");
+      chk.type = "checkbox";
+      chk.className = "node-checkbox";
+      chk.checked = !!entry.node.checked;
+      chk.addEventListener("change", () => {
+        entry.node.checked = chk.checked;
+        saveModel();
+      });
+      li.appendChild(chk);
 
       const nameSpan = document.createElement("span");
       nameSpan.className = "flat-name";
@@ -1276,9 +1268,8 @@ if (searchQuery && searchQuery.length >= 2) {
 	/* =========================
    BLOCK NORMAL VIEW DURING 1–2 CHAR SEARCH
    ========================= */
-  if (searchQuery && searchQuery.length < 3) {
-    // Do NOT render categories or items
-    return;
+	if (searchQuery && searchQuery.length < 3) {
+    return; // DO NOT RENDER ANYTHING
 }
 
      /* =========================
@@ -1593,17 +1584,15 @@ console.log("ACTIONS HTML:", actions.innerHTML);
 }
 
 function nodeOrDescendantMatches(node){
-  // If search is empty OR less than 3 chars → do NOT match anything
+  // STOP ALL RECURSION AT < 3 CHARS
   if (!searchQuery || searchQuery.length < 3) return false;
 
   if (!node) return false;
 
-  // Direct name match
   if ((node.name || "").toLowerCase().includes(searchQuery.toLowerCase())) {
     return true;
   }
 
-  // Recursively check children
   const childArrays = ['subcategories','items','kinds','subkinds'];
   for (const key of childArrays) {
     if (Array.isArray(node[key])) {
