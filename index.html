@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 3</title>
+  <title>Shopping List 4</title>
 
   <style>
 .store-title {
@@ -1039,6 +1039,31 @@ searchInput.addEventListener("input", () => {
 
     const results = collectAllMatchingNodes(store);
     renderSearchResults(results);
+});
+
+// =========================
+// Search input wiring
+// =========================
+
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchBox");
+    if (!searchInput) return; // prevents crash if element missing
+
+    searchInput.addEventListener("input", () => {
+        setSearchQuery(searchInput.value);
+
+        const store = getActiveStore();
+        if (!store) return;
+
+        // If search is empty, show full store again
+        if (!searchQuery) {
+            render();
+            return;
+        }
+
+        const results = collectAllMatchingNodes(store);
+        renderSearchResults(results);
+    });
 });
 
 document.getElementById("clear-aisles-btn").addEventListener("click", () => {
