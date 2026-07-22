@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 9</title>
+  <title>Shopping List 10</title>
 
   <style>
 .store-title {
@@ -527,6 +527,9 @@ body { background:var(--bg);
         <input id="searchInput" class="search" placeholder="Search items..." />
       </div>
     </div>
+	
+	<div id="searchResults"></div>
+
 
     <div class="panel-body">
 
@@ -1258,7 +1261,8 @@ function render(){
   const container = document.getElementById("searchResults");
   container.innerHTML = "";
   container.appendChild(ul);
-}
+    return;
+  }
 
      /* =========================
      NORMAL HIERARCHICAL VIEW
