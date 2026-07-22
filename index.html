@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 13</title>
+  <title>Shopping List 14</title>
 
   <style>
 .store-title {
@@ -946,9 +946,9 @@ function setSearchQuery(q){
 }
 
 // 2. Check if a node name matches the search
-function nodeNameMatches(node){
-  if (!node || !node.name) return false;
-  return node.name.toLowerCase().includes(searchQuery);
+function nodeNameMatches(node) {
+  if (!searchQuery || searchQuery.length < 2) return false;
+  return (node.name || "").toLowerCase().includes(searchQuery.toLowerCase());
 }
 
 // 3. Full recursive walker (categories → subcategories → items → kinds → subkinds)
@@ -999,8 +999,10 @@ function collectAllMatchingNodes(store) {
     const color = CATEGORY_COLORS[cidx % CATEGORY_COLORS.length];
     const catName = cat.name || "Category";
 
-    // Always include the category itself
-    if (!searchQuery || nodeNameMatches(cat)) {
+    /* =========================
+       NORMAL VIEW (no search)
+       ========================= */
+    if (!searchQuery) {
       out.push({
         node: cat,
         level: 0,
@@ -1011,20 +1013,28 @@ function collectAllMatchingNodes(store) {
       });
     }
 
-    // Walk everything under this category
+    /* =========================
+       WALK ALL CHILD NODES
+       ========================= */
     walkNodes(cat, node => {
       if (!node || !node.name) return;
 
-      if (!searchQuery || nodeNameMatches(node)) {
-        out.push({
-          node,
-          level: node.level || 1,
-          levelLabel: node.levelLabel || "Node",
-          categoryName: catName,
-          color,
-          aisle: getAisleForNode(store, node.id)
-        });
+      // SEARCH MODE: only match if >=2 chars AND name matches
+      if (searchQuery && searchQuery.length >= 2) {
+        if (!nodeNameMatches(node)) return;
       }
+
+      // FILTER OUT CATEGORIES IN SEARCH
+      if (node.type === "category") return;
+
+      out.push({
+        node,
+        level: node.level || 1,
+        levelLabel: node.levelLabel || "Node",
+        categoryName: catName,
+        color,
+        aisle: getAisleForNode(store, node.id)
+      });
     });
   });
 
@@ -1041,13 +1051,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const store = getActiveStore();
         if (!store) return;
 
-        // If search is empty, show full store
-        if (!searchQuery) {
-            render();
+        // If search is empty OR less than 2 chars → exit search
+        if (!searchQuery || searchQuery.length < 2) {
+            document.getElementById("searchResults").innerHTML = "";
+            render();   // restore full category view
             return;
         }
 
-        // TEMP: Just re-render the full store until we build search results
+        // Otherwise run search
         render();
     });
 });
