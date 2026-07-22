@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 15</title>
+  <title>Shopping List 16</title>
 
   <style>
 .store-title {
@@ -1585,10 +1585,17 @@ console.log("ACTIONS HTML:", actions.innerHTML);
 }
 
 function nodeOrDescendantMatches(node){
-  if (!searchQuery) return true;
-  if (!node) return false;
-  if ((node.name || "").toLowerCase().includes(searchQuery)) return true;
+  // If search is empty OR less than 3 chars → do NOT match anything
+  if (!searchQuery || searchQuery.length < 3) return false;
 
+  if (!node) return false;
+
+  // Direct name match
+  if ((node.name || "").toLowerCase().includes(searchQuery.toLowerCase())) {
+    return true;
+  }
+
+  // Recursively check children
   const childArrays = ['subcategories','items','kinds','subkinds'];
   for (const key of childArrays) {
     if (Array.isArray(node[key])) {
@@ -1597,6 +1604,7 @@ function nodeOrDescendantMatches(node){
       }
     }
   }
+
   return false;
 }
 
