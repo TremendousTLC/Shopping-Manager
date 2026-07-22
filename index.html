@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 17</title>
+  <title>Shopping List 18</title>
 
   <style>
 .store-title {
@@ -1270,6 +1270,14 @@ if (searchQuery && searchQuery.length >= 2) {
     container.innerHTML = "";
     container.appendChild(ul);
 
+    return;
+}
+
+	/* =========================
+   BLOCK NORMAL VIEW DURING 1–2 CHAR SEARCH
+   ========================= */
+  if (searchQuery && searchQuery.length < 3) {
+    // Do NOT render categories or items
     return;
 }
 
