@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 5</title>
+  <title>Shopping List 6</title>
 
   <style>
 .store-title {
@@ -524,7 +524,7 @@ body { background:var(--bg);
       </div>
 
       <div class="toolbar-search-row">
-        <input id="searchBox" class="search" placeholder="Search items..." />
+        <input id="searchInput" class="search" placeholder="Search items..." />
       </div>
     </div>
 
@@ -1046,11 +1046,11 @@ searchInput.addEventListener("input", () => {
 // =========================
 
 document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("searchBox");
+    const searchInput = document.getElementById("searchInput");
     if (!searchInput) return; // prevents crash if element missing
 
-    searchInput.addEventListener("input", () => {
-        setSearchQuery(searchInput.value);
+    searchInput.addEventListener("input", (e) => {
+        setSearchQuery(e.target.value);
 
         const store = getActiveStore();
         if (!store) return;
