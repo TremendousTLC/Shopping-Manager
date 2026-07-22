@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 21</title>
+  <title>Shopping List 22</title>
 
   <style>
 .store-title {
@@ -1212,55 +1212,99 @@ function render(){
   }
 
 /* =========================
-   SEARCH VIEW (ONLY >= 3 CHARS)
+   SEARCH VIEW (>= 3 chars)
    ========================= */
 if (searchQuery && searchQuery.length >= 3) {
     const matches = collectAllMatchingNodes(store)
       .filter(entry => entry.level !== 0);
 
-    const ul = document.createElement("ul");
-    ul.className = "flat-checked-list";
-
-    matches.forEach(entry => {
-      const li = document.createElement("li");
-      li.className = "flat-item";
-
-      const chk = document.createElement("input");
-      chk.type = "checkbox";
-      chk.className = "node-checkbox";
-      chk.checked = !!entry.node.checked;
-      chk.addEventListener("change", () => {
-        entry.node.checked = chk.checked;
-        saveModel();
-      });
-      li.appendChild(chk);
-
-      const nameSpan = document.createElement("span");
-      nameSpan.className = "flat-name";
-      nameSpan.textContent = entry.node.name || "(unnamed)";
-      li.appendChild(nameSpan);
-
-      const levelSpan = document.createElement("span");
-      levelSpan.className = "flat-level";
-      levelSpan.textContent = entry.levelLabel || "Node";
-      li.appendChild(levelSpan);
-
-      const catSpan = document.createElement("span");
-      catSpan.className = "flat-category";
-      catSpan.textContent = entry.categoryName || "";
-      li.appendChild(catSpan);
-
-      const aisleSpan = document.createElement("span");
-      aisleSpan.className = "flat-aisle";
-      aisleSpan.textContent = entry.aisle ? `Aisle: ${entry.aisle}` : "";
-      li.appendChild(aisleSpan);
-
-      ul.appendChild(li);
-    });
-
     const container = document.getElementById("searchResults");
     container.innerHTML = "";
-    container.appendChild(ul);
+
+    // Group by category first
+    const categories = {};
+    matches.forEach(entry => {
+        const cat = entry.categoryName || "Misc";
+        if (!categories[cat]) categories[cat] = [];
+        categories[cat].push(entry);
+    });
+
+    // Sort categories alphabetically
+    const sortedCats = Object.keys(categories).sort((a, b) =>
+        a.localeCompare(b)
+    );
+
+    sortedCats.forEach(catName => {
+        // CATEGORY HEADER
+        const catHeader = document.createElement("div");
+        catHeader.className = "category-header";
+        catHeader.textContent = catName;
+        container.appendChild(catHeader);
+
+        // Group items inside category by aisle
+        const aisleGroups = {};
+        categories[catName].forEach(entry => {
+            const aisle = entry.aisle || "No Aisle";
+            if (!aisleGroups[aisle]) aisleGroups[aisle] = [];
+            aisleGroups[aisle].push(entry);
+        });
+
+        // Sort aisles
+        const sortedAisles = Object.keys(aisleGroups).sort((a, b) => {
+            if (a === "No Aisle") return 1;
+            if (b === "No Aisle") return -1;
+            return a.localeCompare(b);
+        });
+
+        sortedAisles.forEach(aisle => {
+            // AISLE HEADER
+            const aisleHeader = document.createElement("div");
+            aisleHeader.className = "aisle-header";
+            aisleHeader.textContent =
+                aisle === "No Aisle" ? "Misc Items" : `Aisle ${aisle}`;
+            container.appendChild(aisleHeader);
+
+            // Sort items alphabetically inside aisle
+            const items = aisleGroups[aisle].sort((a, b) =>
+                (a.node.name || "").localeCompare(b.node.name || "")
+            );
+
+            const ul = document.createElement("ul");
+            ul.className = "flat-checked-list";
+
+            items.forEach(entry => {
+                const li = document.createElement("li");
+                li.className = "flat-item";
+
+                // Checkbox
+                const chk = document.createElement("input");
+                chk.type = "checkbox";
+                chk.className = "node-checkbox";
+                chk.checked = !!entry.node.checked;
+                chk.addEventListener("change", () => {
+                    entry.node.checked = chk.checked;
+                    saveModel();
+                });
+                li.appendChild(chk);
+
+                // Name
+                const nameSpan = document.createElement("span");
+                nameSpan.className = "flat-name";
+                nameSpan.textContent = entry.node.name || "(unnamed)";
+                li.appendChild(nameSpan);
+
+                // Level label
+                const levelSpan = document.createElement("span");
+                levelSpan.className = "flat-level";
+                levelSpan.textContent = entry.levelLabel || "Node";
+                li.appendChild(levelSpan);
+
+                ul.appendChild(li);
+            });
+
+            container.appendChild(ul);
+        });
+    });
 
     return;
 }
