@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 14</title>
+  <title>Shopping List 15</title>
 
   <style>
 .store-title {
@@ -1213,13 +1213,13 @@ function render(){
     return;
   }
 
-  /* =========================
-     SEARCH VIEW
-     ========================= */
-  if (searchQuery) {
+/* =========================
+   SEARCH VIEW
+   ========================= */
+if (searchQuery && searchQuery.length >= 2) {
     const matches = collectAllMatchingNodes(store)
       .filter(entry => entry.level !== 0);
-	
+    
     const ul = document.createElement("ul");
     ul.className = "flat-checked-list";
 
@@ -1243,39 +1243,35 @@ function render(){
         li.appendChild(spacer);
       }
 
-    // Node name
-    const nameSpan = document.createElement("span");
-    nameSpan.className = "flat-name";
-    nameSpan.textContent = entry.node.name || "(unnamed)";
-    li.appendChild(nameSpan);
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "flat-name";
+      nameSpan.textContent = entry.node.name || "(unnamed)";
+      li.appendChild(nameSpan);
 
-    // Level label (Category, Subcategory, Item, Kind, Subkind)
-    const levelSpan = document.createElement("span");
-    levelSpan.className = "flat-level";
-    levelSpan.textContent = entry.levelLabel || "Node";
-    li.appendChild(levelSpan);
+      const levelSpan = document.createElement("span");
+      levelSpan.className = "flat-level";
+      levelSpan.textContent = entry.levelLabel || "Node";
+      li.appendChild(levelSpan);
 
-    // Category name
-    const catSpan = document.createElement("span");
-    catSpan.className = "flat-category";
-    catSpan.textContent = entry.categoryName || "";
-    li.appendChild(catSpan);
+      const catSpan = document.createElement("span");
+      catSpan.className = "flat-category";
+      catSpan.textContent = entry.categoryName || "";
+      li.appendChild(catSpan);
 
-    // Aisle
-    const aisleSpan = document.createElement("span");
-    aisleSpan.className = "flat-aisle";
-    aisleSpan.textContent = entry.aisle ? `Aisle: ${entry.aisle}` : "";
-    li.appendChild(aisleSpan);
+      const aisleSpan = document.createElement("span");
+      aisleSpan.className = "flat-aisle";
+      aisleSpan.textContent = entry.aisle ? `Aisle: ${entry.aisle}` : "";
+      li.appendChild(aisleSpan);
 
-    ul.appendChild(li);
-  });
+      ul.appendChild(li);
+    });
 
-  // Replace your old container append with this:
-  const container = document.getElementById("searchResults");
-  container.innerHTML = "";
-  container.appendChild(ul);
+    const container = document.getElementById("searchResults");
+    container.innerHTML = "";
+    container.appendChild(ul);
+
     return;
-  }
+}
 
      /* =========================
      NORMAL HIERARCHICAL VIEW
