@@ -612,6 +612,8 @@ body { background:var(--bg);
 
 <script>
 
+const SHOP_RENDER_VERSION = "SM-001";
+
 // 1️⃣ Read recipe ID from URL
 const params = new URLSearchParams(window.location.search);
 const recipeId = params.get("recipe");
@@ -774,6 +776,8 @@ if (recipeId) {
 
         // Try to find an existing item in the store
 		let existingItem = findExistingItemUniversal(store, item.name);
+		
+		sub.checked = true;
 
         if (existingItem) {
           // Item already exists in store → reuse it
@@ -1160,6 +1164,8 @@ document.getElementById("clear-aisles-btn").addEventListener("click", () => {
    ========================= */
 
 function render(){
+  console.log("SHOPPING MANAGER RENDER VERSION:", SHOP_RENDER_VERSION);
+
   const store = getActiveStore();
   if (!store) return;
   normalizeStore(store);
