@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-015";
+const SHOP_RENDER_VERSION = "SM-016";
 
 // 2️⃣ Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "tlc_shopping_multi_store_v1";
@@ -761,10 +761,12 @@ if (!recipeId || recipeId === "undefined") {
   recipeId = null;
 }
 
-// 2️⃣ Import recipe ingredients
+console.log("DEBUG recipeId =", recipeId);
+
+// Import recipe ingredients
 let incomingRecipe = null;
 
-if (recipeId) {
+if (recipeId !== null) {
   const recipes = JSON.parse(localStorage.getItem("rcp_recipes") || "[]");
   incomingRecipe = recipes.find(r => r.id === recipeId);
 
@@ -841,6 +843,11 @@ if (recipeId) {
     saveModel();
     render();
   }
+}
+
+// Safe startup render (only when NOT importing)
+if (!recipeId) {
+  render();
 }
 
 function getActiveStore(){
