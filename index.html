@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-004";
+const SHOP_RENDER_VERSION = "SM-005";
 
 // 1️⃣ Read recipe ID from URL
 const params = new URLSearchParams(window.location.search);
@@ -743,7 +743,6 @@ function initSortables(){
         const parentNodeEl = toList.closest(".node");
         const parentId = parentNodeEl ? parentNodeEl.dataset.id : null;
         moveNodeToInStore(draggedId, parentId, acceptLevel, newIndex);
-        render();
       }
     });
     sortableInstances.push(s);
