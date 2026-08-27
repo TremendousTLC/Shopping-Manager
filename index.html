@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-003";
+const SHOP_RENDER_VERSION = "SM-004";
 
 // 1️⃣ Read recipe ID from URL
 const params = new URLSearchParams(window.location.search);
@@ -714,6 +714,40 @@ function loadModel(){
   if (!dataModel.activeStoreId && dataModel.stores.length) {
     dataModel.activeStoreId = dataModel.stores[0].id;
   }
+}
+
+/* =========================
+   Sortable + Auto-repair move logic
+   ========================= */
+
+let sortableInstances = [];
+
+function initSortables(){
+  sortableInstances.forEach(s => s.destroy && s.destroy());
+  sortableInstances = [];
+
+  const lists = document.querySelectorAll(".children-list");
+  lists.forEach(list => {
+    const s = new Sortable(list, {
+      group: { name: 'shared', pull: true, put: true },
+      animation: 150,
+      handle: '.drag-handle',
+      ghostClass: 'highlight',
+      fallbackOnBody: true,
+      swapThreshold: 0.65,
+      onEnd: function(evt){
+        const draggedId = evt.item.dataset.id;
+        const toList = evt.to;
+        const newIndex = evt.newIndex;
+        const acceptLevel = parseInt(toList.dataset.acceptLevel || "0",10);
+        const parentNodeEl = toList.closest(".node");
+        const parentId = parentNodeEl ? parentNodeEl.dataset.id : null;
+        moveNodeToInStore(draggedId, parentId, acceptLevel, newIndex);
+        render();
+      }
+    });
+    sortableInstances.push(s);
+  });
 }
 
 function saveModel(){ 
@@ -1157,40 +1191,6 @@ document.getElementById("clear-aisles-btn").addEventListener("click", () => {
   saveModel();
   render();
 });
-
-/* =========================
-   Sortable + Auto-repair move logic
-   ========================= */
-
-let sortableInstances = [];
-
-function initSortables(){
-  sortableInstances.forEach(s => s.destroy && s.destroy());
-  sortableInstances = [];
-
-  const lists = document.querySelectorAll(".children-list");
-  lists.forEach(list => {
-    const s = new Sortable(list, {
-      group: { name: 'shared', pull: true, put: true },
-      animation: 150,
-      handle: '.drag-handle',
-      ghostClass: 'highlight',
-      fallbackOnBody: true,
-      swapThreshold: 0.65,
-      onEnd: function(evt){
-        const draggedId = evt.item.dataset.id;
-        const toList = evt.to;
-        const newIndex = evt.newIndex;
-        const acceptLevel = parseInt(toList.dataset.acceptLevel || "0",10);
-        const parentNodeEl = toList.closest(".node");
-        const parentId = parentNodeEl ? parentNodeEl.dataset.id : null;
-        moveNodeToInStore(draggedId, parentId, acceptLevel, newIndex);
-        render();
-      }
-    });
-    sortableInstances.push(s);
-  });
-}
 
 const root = document.getElementById("rootList");
 if (root && !root.dataset.acceptLevel) {
