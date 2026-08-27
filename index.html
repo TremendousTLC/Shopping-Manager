@@ -1603,7 +1603,6 @@ nameText.style.setProperty("font-size", fontSize, "important");
 const actions = document.createElement("div");
 
 actions.className = "node-actions";
-console.log("ACTIONS BLOCK RAN");
 
 /* ADD BUTTON (only for levels 0–3) */
 if (level < 4) {
@@ -1675,9 +1674,6 @@ delBtn.addEventListener("click", () => {
 });
 
 actions.appendChild(delBtn);
-
-console.log("ACTIONS HTML:", actions.innerHTML);
-
 
   /* ====== APPEND GRID COLUMNS IN ORDER ====== */
 
