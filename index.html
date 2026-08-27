@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-020";
+const SHOP_RENDER_VERSION = "SM-021";
 
 // 2️⃣ Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "tlc_shopping_multi_store_v1";
@@ -746,75 +746,81 @@ function initSortables(){
 }
 
 function saveModel(){ 
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dataModel)); } 
-  catch(e){ console.warn("save failed", e); } 
+  try { 
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataModel)); 
+  } catch(e){ 
+    console.warn("save failed", e); 
+  } 
 }
 
-loadModel();   // MUST happen BEFORE importing recipe ingredients
+function importRecipeFromUrl() {
 
-// 1️⃣ Read recipe ID from URL
-const params = new URLSearchParams(window.location.search);
-let recipeId = params.get("recipe");
+  const params = new URLSearchParams(window.location.search);
+  let recipeId = params.get("recipe");
 
-// Normalize bad or missing recipe IDs
-if (!recipeId || recipeId === "undefined") {
-  recipeId = null;
-}
-
-console.log("DEBUG recipeId =", recipeId);
-
-// Import recipe ingredients
-let incomingRecipe = null;
-
-if (recipeId !== null) {
-  const recipes = JSON.parse(localStorage.getItem("rcp_recipes") || "[]");
-  incomingRecipe = recipes.find(r => r.id === recipeId);
-
-  if (incomingRecipe) {
-    console.log("Loaded recipe:", incomingRecipe);
-
-    const store = getActiveStore();
-    if (!store) {
-      console.warn("No active store found!");
-    } else {
-
-      // Ensure store arrays exist
-      store.items = store.items || [];
-      store.categories = store.categories || [];
-      store.aisles = store.aisles || [];
-      store.recipeImports = store.recipeImports || [];
-
-      // Create a category for imported recipe items
-      const importCategory = {
-        id: "import_" + recipeId,
-        name: incomingRecipe.name,
-        color: "#ffcc66"
-      };
-
-      if (!store.categories.find(c => c.id === importCategory.id)) {
-        store.categories.push(importCategory);
-      }
-
-      // Add each ingredient
-      incomingRecipe.ingredients.forEach(group => {
-        const items = group.items || group;
-
-        items.forEach(item => {
-          store.items.push({
-            id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
-            name: item.name || item.item || "",
-            qty: item.qty || "",
-            aisle: item.aisle || "Misc",
-            checked: false,
-            categoryId: importCategory.id
-          });
-        });
-      });
-    }
-
-    saveModel();
-    render();
+  if (!recipeId || recipeId === "undefined") {
+    recipeId = null;
   }
+
+  console.log("DEBUG recipeId =", recipeId);
+
+  if (!recipeId) {
+    render();
+    return;
+  }
+
+  const recipes = JSON.parse(localStorage.getItem("rcp_recipes") || "[]");
+  const incomingRecipe = recipes.find(r => r.id === recipeId);
+
+  if (!incomingRecipe) {
+    console.warn("Recipe not found:", recipeId);
+    render();
+    return;
+  }
+
+  console.log("Loaded recipe:", incomingRecipe);
+
+  const store = getActiveStore();
+  if (!store) {
+    console.warn("No active store found!");
+    render();
+    return;
+  }
+
+  store.items = store.items || [];
+  store.categories = store.categories || [];
+  store.aisles = store.aisles || [];
+  store.recipeImports = store.recipeImports || [];
+
+  const importCategory = {
+    id: "import_" + recipeId,
+    name: incomingRecipe.name,
+    color: "#ffcc66"
+  };
+
+  if (!store.categories.find(c => c.id === importCategory.id)) {
+    store.categories.push(importCategory);
+  }
+
+  incomingRecipe.ingredients.forEach(group => {
+    const items = group.items || group;
+
+    items.forEach(item => {
+      store.items.push({
+        id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
+        name: item.name || item.item || item.text || item.ingredient || "Unnamed",
+        qty: item.qty || "",
+        aisle: item.aisle || "Misc",
+        checked: false,
+        categoryId: importCategory.id
+      });
+    });
+  });
+
+  store.activeCategoryId = importCategory.id;
+
+  saveModel();
+  render();
 }
 
 // Safe startup render (only when NOT importing)
