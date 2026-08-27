@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-018";
+const SHOP_RENDER_VERSION = "SM-019";
 
 // 2️⃣ Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "tlc_shopping_multi_store_v1";
@@ -776,41 +776,41 @@ if (recipeId !== null) {
     const store = getActiveStore();
     if (!store) {
       console.warn("No active store found!");
-      return;
-    }
+    } else {
 
-    // ⭐ FIX: ensure store arrays exist
-    store.items = store.items || [];
-    store.categories = store.categories || [];
-    store.aisles = store.aisles || [];
-    store.recipeImports = store.recipeImports || [];
+      // ⭐ Ensure store arrays exist
+      store.items = store.items || [];
+      store.categories = store.categories || [];
+      store.aisles = store.aisles || [];
+      store.recipeImports = store.recipeImports || [];
 
-    // Create a category for imported recipe items
-    const importCategory = {
-      id: "import_" + recipeId,
-      name: incomingRecipe.name,
-      color: "#ffcc66"
-    };
+      // Create a category for imported recipe items
+      const importCategory = {
+        id: "import_" + recipeId,
+        name: incomingRecipe.name,
+        color: "#ffcc66"
+      };
 
-    if (!store.categories.find(c => c.id === importCategory.id)) {
-      store.categories.push(importCategory);
-    }
+      if (!store.categories.find(c => c.id === importCategory.id)) {
+        store.categories.push(importCategory);
+      }
 
-    // Add each ingredient
-    incomingRecipe.ingredients.forEach(group => {
-      const items = group.items || group;
+      // Add each ingredient
+      incomingRecipe.ingredients.forEach(group => {
+        const items = group.items || group;
 
-      items.forEach(item => {
-        store.items.push({
-          id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
-          name: item.name || item.item || "",
-          qty: item.qty || "",
-          aisle: item.aisle || "",
-          checked: false,
-          categoryId: importCategory.id
+        items.forEach(item => {
+          store.items.push({
+            id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
+            name: item.name || item.item || "",
+            qty: item.qty || "",
+            aisle: item.aisle || "",
+            checked: false,
+            categoryId: importCategory.id
+          });
         });
       });
-    });
+    }
 
     saveModel();
     render();
