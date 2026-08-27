@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-012";
+const SHOP_RENDER_VERSION = "SM-013";
 
 // 2️⃣ Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "tlc_shopping_multi_store_v1";
@@ -1455,7 +1455,6 @@ if (searchQuery && searchQuery.length >= 3) {
   });
 
   initSortables();
-  saveModel();
 
   if (lastEditingId) {
     setTimeout(() => {
