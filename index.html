@@ -612,16 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-008";
-
-// 1️⃣ Read recipe ID from URL
-const params = new URLSearchParams(window.location.search);
-let recipeId = params.get("recipe");
-
-// Normalize bad or missing recipe IDs
-if (!recipeId || recipeId === "undefined") {
-  recipeId = null;
-}
+const SHOP_RENDER_VERSION = "SM-009";
 
 // 2️⃣ Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "tlc_shopping_multi_store_v1";
