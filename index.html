@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-007";
+const SHOP_RENDER_VERSION = "SM-008";
 
 // 1️⃣ Read recipe ID from URL
 const params = new URLSearchParams(window.location.search);
@@ -761,7 +761,18 @@ function saveModel(){
 
 loadModel();   // MUST happen BEFORE importing recipe ingredients
 
-// Import recipe ingredients
+let incomingRecipe = null;
+
+// 1️⃣ Read recipe ID from URL
+const params = new URLSearchParams(window.location.search);
+let recipeId = params.get("recipe");
+
+// Normalize bad or missing recipe IDs
+if (!recipeId || recipeId === "undefined") {
+  recipeId = null;
+}
+
+// 2️⃣ Import recipe ingredients
 let incomingRecipe = null;
 
 if (recipeId) {
@@ -782,72 +793,66 @@ if (recipeId) {
       flatItems = incomingRecipe.ingredients;
     }
 
-    // MULTI-STORE IMPORT OPTION
-    dataModel.stores.forEach(store => {
+    // 3️⃣ Import ONLY into the active store
+    const store = dataModel.stores.find(s => s.id === dataModel.activeStoreId);
 
-      // Ensure a "Recipe Imports" category exists in each store
-      let recipeCat = store.categories.find(c => c.name === "Recipe Imports");
-      if (!recipeCat) {
-        recipeCat = {
-          id: uid("cat"),
-          name: "Recipe Imports",
-          collapsed: false,
-          subcategories: []
-        };
-        store.categories.push(recipeCat);
+    // Ensure a "Recipe Imports" category exists
+    let recipeCat = store.categories.find(c => c.name === "Recipe Imports");
+    if (!recipeCat) {
+      recipeCat = {
+        id: uid("cat"),
+        name: "Recipe Imports",
+        collapsed: false,
+        subcategories: []
+      };
+      store.categories.push(recipeCat);
+    }
+
+    // Ensure an "Ingredients" subcategory exists
+    let sub = recipeCat.subcategories.find(s => s.name === "Ingredients");
+    if (!sub) {
+      sub = {
+        id: uid("sub"),
+        name: "Ingredients",
+        collapsed: false,
+        items: []
+      };
+      recipeCat.subcategories.push(sub);
+    }
+
+    // Insert each ingredient
+    flatItems.forEach(item => {
+      let existingItem = findExistingItemUniversal(store, item.name);
+      sub.checked = true;
+
+      if (existingItem) {
+        sub.items.push({
+          id: uid("item"),
+          name: existingItem.name,
+          qty: item.qty || "",
+          unit: item.unit || "",
+          prep: item.prep || "",
+          aisle: existingItem.aisle,
+          checked: true
+        });
+      } else {
+        sub.items.push({
+          id: uid("item"),
+          name: item.name || "",
+          qty: item.qty || "",
+          unit: item.unit || "",
+          prep: item.prep || "",
+          aisle: "",
+          checked: true
+        });
       }
+    });
 
-      // Ensure an "Ingredients" subcategory exists
-      let sub = recipeCat.subcategories.find(s => s.name === "Ingredients");
-      if (!sub) {
-        sub = {
-          id: uid("sub"),
-          name: "Ingredients",
-          collapsed: false,
-          items: []
-        };
-        recipeCat.subcategories.push(sub);
-      }
-
-      // Insert each ingredient into the correct items array
-      flatItems.forEach(item => {
-
-        // Try to find an existing item in the store
-		let existingItem = findExistingItemUniversal(store, item.name);
-		
-		sub.checked = true;
-
-        if (existingItem) {
-          // Item already exists in store → reuse it
-          sub.items.push({
-            id: uid("item"),
-            name: existingItem.name,
-            qty: item.qty || "",
-            unit: item.unit || "",
-            prep: item.prep || "",
-            aisle: existingItem.aisle,
-            checked: true
-          });
-        } else {
-          // Item does NOT exist → add new one
-          sub.items.push({
-            id: uid("item"),
-            name: item.name || "",
-            qty: item.qty || "",
-            unit: item.unit || "",
-            prep: item.prep || "",
-            aisle: "",
-            checked: true
-          });
-        }
-
-      });
-
-    }); // closes dataModel.stores.forEach
-
+    // Save + render after import
     saveModel();
-  } // closes if (incomingRecipe)
-} // closes if (recipeId)
+    render();
+  }
+}
 
 function getActiveStore(){
   return dataModel.stores.find(s => s.id === dataModel.activeStoreId) || null;
