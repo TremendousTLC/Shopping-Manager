@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-010";
+const SHOP_RENDER_VERSION = "SM-011";
 
 // 2️⃣ Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "tlc_shopping_multi_store_v1";
@@ -782,7 +782,7 @@ if (recipeId) {
       flatItems = incomingRecipe.ingredients;
     }
 
-    // 3️⃣ Import ONLY into the active store
+    // Import ONLY into the active store
     const store = dataModel.stores.find(s => s.id === dataModel.activeStoreId);
 
     // Ensure a "Recipe Imports" category exists
