@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-013";
+const SHOP_RENDER_VERSION = "SM-014";
 
 // 2️⃣ Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "tlc_shopping_multi_store_v1";
@@ -2266,8 +2266,14 @@ function renderStats(){
 
 document.getElementById("searchInput").addEventListener("input", (e) => {
   setSearchQuery(e.target.value);
-  render();
+
+  // Prevent auto-render on page load
+  if (e.inputType !== undefined) {
+    render();
+  }
 });
+
+
 
 /* =========================
    initApp()
