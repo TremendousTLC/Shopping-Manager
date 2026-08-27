@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-019";
+const SHOP_RENDER_VERSION = "SM-020";
 
 // 2️⃣ Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "tlc_shopping_multi_store_v1";
@@ -778,7 +778,7 @@ if (recipeId !== null) {
       console.warn("No active store found!");
     } else {
 
-      // ⭐ Ensure store arrays exist
+      // Ensure store arrays exist
       store.items = store.items || [];
       store.categories = store.categories || [];
       store.aisles = store.aisles || [];
@@ -804,7 +804,7 @@ if (recipeId !== null) {
             id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
             name: item.name || item.item || "",
             qty: item.qty || "",
-            aisle: item.aisle || "",
+            aisle: item.aisle || "Misc",
             checked: false,
             categoryId: importCategory.id
           });
