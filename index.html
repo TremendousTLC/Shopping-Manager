@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-016";
+const SHOP_RENDER_VERSION = "SM-017";
 
 // 2️⃣ Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "tlc_shopping_multi_store_v1";
@@ -773,73 +773,39 @@ if (recipeId !== null) {
   if (incomingRecipe) {
     console.log("Loaded recipe:", incomingRecipe);
 
-    // Flatten grouped ingredients
-    let flatItems = [];
-
-    if (incomingRecipe.ingredients[0].items) {
-      incomingRecipe.ingredients.forEach(g => {
-        g.items.forEach(item => flatItems.push(item));
-      });
+    const store = getActiveStore();
+    if (!store) {
+      console.warn("No active store found!");
     } else {
-      flatItems = incomingRecipe.ingredients;
-    }
-
-    // Import ONLY into the active store
-    const store = dataModel.stores.find(s => s.id === dataModel.activeStoreId);
-
-    // Ensure a "Recipe Imports" category exists
-    let recipeCat = store.categories.find(c => c.name === "Recipe Imports");
-    if (!recipeCat) {
-      recipeCat = {
-        id: uid("cat"),
-        name: "Recipe Imports",
-        collapsed: false,
-        subcategories: []
+      // Create a category for imported recipe items
+      const importCategory = {
+        id: "import_" + recipeId,
+        name: incomingRecipe.name,
+        color: "#ffcc66"
       };
-      store.categories.push(recipeCat);
-    }
 
-    // Ensure an "Ingredients" subcategory exists
-    let sub = recipeCat.subcategories.find(s => s.name === "Ingredients");
-    if (!sub) {
-      sub = {
-        id: uid("sub"),
-        name: "Ingredients",
-        collapsed: false,
-        items: []
-      };
-      recipeCat.subcategories.push(sub);
-    }
-
-    // Insert each ingredient
-    flatItems.forEach(item => {
-      let existingItem = findExistingItemUniversal(store, item.name);
-      sub.checked = true;
-
-      if (existingItem) {
-        sub.items.push({
-          id: uid("item"),
-          name: existingItem.name,
-          qty: item.qty || "",
-          unit: item.unit || "",
-          prep: item.prep || "",
-          aisle: existingItem.aisle,
-          checked: true
-        });
-      } else {
-        sub.items.push({
-          id: uid("item"),
-          name: item.name || "",
-          qty: item.qty || "",
-          unit: item.unit || "",
-          prep: item.prep || "",
-          aisle: "",
-          checked: true
-        });
+      // Add category if not present
+      if (!store.categories.find(c => c.id === importCategory.id)) {
+        store.categories.push(importCategory);
       }
-    });
 
-    // Save + render after import
+      // Add each ingredient as a store item
+      incomingRecipe.ingredients.forEach(group => {
+        const items = group.items || group; // grouped or flat
+
+        items.forEach(item => {
+          store.items.push({
+            id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
+            name: item.name || item.item || "",
+            qty: item.qty || "",
+            aisle: item.aisle || "",
+            checked: false,
+            categoryId: importCategory.id
+          });
+        });
+      });
+    }
+
     saveModel();
     render();
   }
