@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-011";
+const SHOP_RENDER_VERSION = "SM-012";
 
 // 2️⃣ Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "tlc_shopping_multi_store_v1";
@@ -1275,7 +1275,6 @@ if (showCheckedOnlyView) {
       chk.addEventListener("change", () => {
         entry.node.checked = chk.checked;
         saveModel();
-        if (!chk.checked) render();
       });
 
       const name = document.createElement("div");
