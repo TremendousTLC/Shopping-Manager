@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-014";
+const SHOP_RENDER_VERSION = "SM-015";
 
 // 2️⃣ Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "tlc_shopping_multi_store_v1";
@@ -2311,8 +2311,6 @@ dataModel.stores.forEach(store => {
   store.categories = store.categories.filter(c => c.name !== "Recipe Imports");
 });
 saveModel();
-render();
-
 
 </script>
 </body>
