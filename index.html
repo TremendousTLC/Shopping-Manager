@@ -612,10 +612,9 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-003";
+const SHOP_RENDER_VERSION = "SM-004";
 
 // Define storage key + model BEFORE loadModel()
-const STORAGE_KEY = "sm_stores";
 let dataModel = null;
 let showCheckedOnlyView = false;
 let searchQuery = "";
@@ -646,7 +645,7 @@ function uid(prefix="id"){
   return prefix + "_" + Math.random().toString(36).slice(2,10); 
 }
 
-// 3️⃣ Load the shopping model FIRST
+// Load the shopping model FIRST
 function loadModel() {
   // Load stores
   const rawStores = localStorage.getItem("sm_stores");
@@ -815,6 +814,8 @@ function normalizeStore(store){
     });
   });
 }
+
+loadModel();
 
 function applyDefaultCollapseToStore(store){
   function walk(node, level){
