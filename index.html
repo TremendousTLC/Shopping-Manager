@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-014";
+const SHOP_RENDER_VERSION = "SM-015";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1253,14 +1253,14 @@ if (showCheckedOnlyView) {
         render();
       });
 
-      /* NAME (NO recipe qty/unit here) */
+      /* NAME — NO recipe qty/unit */
       const name = document.createElement("div");
       name.classList.add("checked-name");
       name.style.color = entry.color || "#00e6ff";
       name.style.maxWidth = "360px";
       name.innerText = entry.node.name || "(unnamed)";
 
-      /* SHOPPING QTY INPUT */
+      /* SHOPPING QTY — SAME ROW, BEFORE AISLE */
       const qtyInput = document.createElement("input");
       qtyInput.type = "text";
       qtyInput.placeholder = "Qty";
@@ -1280,7 +1280,7 @@ if (showCheckedOnlyView) {
         saveModel();
       });
 
-      /* AISLE BADGE */
+      /* AISLE BADGE — SAME ROW */
       const meta = document.createElement("div");
       meta.className = "match-meta";
 
@@ -1293,7 +1293,7 @@ if (showCheckedOnlyView) {
       /* BUILD ROW */
       li.appendChild(chk);
       li.appendChild(name);
-      li.appendChild(qtyInput);   // ⭐ shopping qty in the middle
+      li.appendChild(qtyInput);
       li.appendChild(meta);
 
       ul.appendChild(li);
@@ -1545,9 +1545,14 @@ function renderNode(obj, level, color) {
     chk.type = "checkbox";
     chk.className = "node-checkbox";
     chk.checked = !!obj.checked;
+    chk.addEventListener("change", () => {
+      obj.checked = chk.checked;
+      saveModel();
+      render();
+    });
   }
 
-  /* NAME (with recipe qty + unit) */
+  /* NAME — SHOW RECIPE QTY + UNIT */
   const name = document.createElement("div");
   name.className = "node-name";
 
