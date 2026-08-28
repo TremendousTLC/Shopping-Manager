@@ -622,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-021";
+const SHOP_RENDER_VERSION = "SM-022";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -820,7 +820,7 @@ function importRecipeFromUrl() {
         qty: item.qty || "",
 		unit: item.unit || "", 
         aisle: item.aisle || "Misc",
-        checked: false,
+        checked: true,
         kinds: []
       });
     });
