@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-006";
+const SHOP_RENDER_VERSION = "SM-007";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -727,8 +727,6 @@ function importRecipeFromUrl() {
     recipeId = null;
   }
 
-  console.log("DEBUG recipeId =", recipeId);
-
   if (!recipeId) {
     render();
     return;
@@ -738,16 +736,12 @@ function importRecipeFromUrl() {
   const incomingRecipe = recipes.find(r => r.id === recipeId);
 
   if (!incomingRecipe) {
-    console.warn("Recipe not found:", recipeId);
     render();
     return;
   }
 
-  console.log("Loaded recipe:", incomingRecipe);
-
   const store = getActiveStore();
   if (!store) {
-    console.warn("No active store found!");
     render();
     return;
   }
@@ -767,11 +761,10 @@ function importRecipeFromUrl() {
     store.categories.push(importCategory);
   }
 
-  // Always ensure subcategories array exists
   importCategory.subcategories = importCategory.subcategories || [];
 
   // --------------------------------------------
-  // CREATE OR FIND SUBCATEGORY FOR IMPORTED ITEMS
+  // ALWAYS USE OR CREATE SUBCATEGORY
   // --------------------------------------------
   let subcat = importCategory.subcategories.find(s => s.id === "sub_import");
   if (!subcat) {
@@ -784,10 +777,14 @@ function importRecipeFromUrl() {
   }
 
   // --------------------------------------------
-  // ADD INGREDIENTS INTO THE HIERARCHICAL STRUCTURE
+  // ALWAYS APPEND INGREDIENTS
   // --------------------------------------------
   incomingRecipe.ingredients.forEach(group => {
-    const items = group.items || group;
+
+    // Handle both formats:
+    // 1. { items: [...] }
+    // 2. [ { name: ... }, ... ]
+    const items = Array.isArray(group.items) ? group.items : group;
 
     items.forEach(item => {
       subcat.items.push({
@@ -796,7 +793,7 @@ function importRecipeFromUrl() {
         qty: item.qty || "",
         aisle: item.aisle || "Misc",
         checked: false,
-        kinds: []   // required by normalizeStore()
+        kinds: []
       });
     });
   });
