@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-012";
+const SHOP_RENDER_VERSION = "SM-013";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1224,11 +1224,9 @@ if (showCheckedOnlyView) {
       showAllBtn.addEventListener("click", () => {
         showCheckedOnlyView = false;
 
-        // Restore toggle button text
         const toggleBtn = document.getElementById("toggle-checked-action");
         if (toggleBtn) toggleBtn.innerText = "Show Only Checkmarked Items";
 
-        // Restore search results visibility
         if (searchResults) searchResults.style.display = "";
 
         render();
@@ -1243,9 +1241,9 @@ if (showCheckedOnlyView) {
 
     flat.forEach(entry => {
       const li = document.createElement("li");
-      li.className = "flat-item";
-      li.classList.add("checked-row");
+      li.className = "flat-item checked-row";
 
+      /* CHECKBOX */
       const chk = document.createElement("input");
       chk.type = "checkbox";
       chk.className = "node-checkbox";
@@ -1253,27 +1251,49 @@ if (showCheckedOnlyView) {
       chk.addEventListener("change", () => {
         entry.node.checked = chk.checked;
         saveModel();
+        render();
       });
 
+      /* NAME (recipe qty + unit still shows here) */
       const name = document.createElement("div");
       name.classList.add("checked-name");
       name.style.color = entry.color || "#00e6ff";
       name.style.maxWidth = "360px";
-      name.innerText = entry.node.name || "(unnamed)";
 
+      const qtyUnit = (entry.node.qty || entry.node.unit)
+        ? ` (${entry.node.qty || ""} ${entry.node.unit || ""})`
+        : "";
+
+      name.innerText = (entry.node.name || "(unnamed)") + qtyUnit;
+
+      /* AISLE BADGE */
       const meta = document.createElement("div");
       meta.className = "match-meta";
-      
+
       const aisleBadge = document.createElement("div");
-      aisleBadge.className = "aisle-badge";
-      aisleBadge.classList.add("checked-aisle");
+      aisleBadge.className = "aisle-badge checked-aisle";
       aisleBadge.innerText = entry.aisle || "Aisle";
 
       meta.appendChild(aisleBadge);
 
+      /* ⭐ SHOPPING QTY INPUT (always shown for checked items) */
+      const qtyInput = document.createElement("input");
+      qtyInput.type = "text";
+      qtyInput.placeholder = "Shopping qty";
+      qtyInput.value = entry.node.shopQty || "";
+      qtyInput.className = "qty-input";
+
+      qtyInput.addEventListener("input", () => {
+        entry.node.shopQty = qtyInput.value;   // does NOT affect recipe qty
+        saveModel();
+      });
+
+      /* BUILD ROW */
       li.appendChild(chk);
       li.appendChild(name);
       li.appendChild(meta);
+      li.appendChild(qtyInput);
+
       ul.appendChild(li);
     });
 
@@ -1494,29 +1514,29 @@ function renderNode(obj, level, color) {
   const header = document.createElement("div");
   header.className = "node-header";
 
-  /* COLUMN 1 — CHEVRON */
+  /* CHEVRON */
   const chev = document.createElement("div");
   chev.className = "chev";
   const childCount = countChildrenForNode(obj, level);
 
   if (childCount > 0) {
     chev.innerText = obj.collapsed ? "▶" : "▼";
-    chev.style.setProperty("color", levelColor, "important");
-    chev.style.setProperty("font-size", chevSize, "important");
+    chev.style.color = levelColor;
+    chev.style.fontSize = chevSize;
     chev.onclick = () => { obj.collapsed = !obj.collapsed; render(); };
   } else {
     chev.innerText = "";
     chev.style.visibility = "hidden";
   }
 
-  /* COLUMN 2 — DRAG HANDLE */
+  /* DRAG HANDLE */
   const drag = document.createElement("div");
   drag.className = "drag-handle";
   drag.innerText = "☰";
-  drag.style.setProperty("color", levelColor, "important");
-  drag.style.setProperty("font-size", dragSize, "important");
+  drag.style.color = levelColor;
+  drag.style.fontSize = dragSize;
 
-  /* COLUMN 3 — CHECKBOX (ONLY FOR ITEMS, level === 2) */
+  /* CHECKBOX — ONLY LEVEL 2 */
   let chk = null;
   if (level === 2) {
     chk = document.createElement("input");
@@ -1525,7 +1545,7 @@ function renderNode(obj, level, color) {
     chk.checked = !!obj.checked;
   }
 
-  /* COLUMN 4 — NAME (shows recipe qty + unit) */
+  /* NAME (with recipe qty + unit) */
   const name = document.createElement("div");
   name.className = "node-name";
 
@@ -1544,16 +1564,18 @@ function renderNode(obj, level, color) {
     const nameText = document.createElement("span");
     nameText.className = "name-text";
 
-    // Recipe qty + unit (read-only, from Recipe Manager)
-    const qtyUnit = (obj.qty || obj.unit) ? ` (${obj.qty || ""} ${obj.unit || ""})` : "";
-    nameText.innerText = (obj.name || "(unnamed)") + qtyUnit;
+    const qtyUnit = (obj.qty || obj.unit)
+      ? ` (${obj.qty || ""} ${obj.unit || ""})`
+      : "";
 
-    nameText.style.setProperty("color", levelColor, "important");
-    nameText.style.setProperty("font-size", fontSize, "important");
+    nameText.innerText = (obj.name || "(unnamed)") + qtyUnit;
+    nameText.style.color = levelColor;
+    nameText.style.fontSize = fontSize;
+
     name.appendChild(nameText);
   }
 
-  /* COLUMN 5 — AISLE (for levels >= 1) */
+  /* AISLE */
   let aisleWrapper = null;
   if (level >= 1) {
     aisleWrapper = document.createElement("div");
@@ -1573,7 +1595,7 @@ function renderNode(obj, level, color) {
     aisleWrapper.appendChild(sel);
   }
 
-  /* COLUMN 6 — ACTIONS */
+  /* ACTIONS */
   const actions = document.createElement("div");
   actions.className = "node-actions";
 
@@ -1634,30 +1656,17 @@ function renderNode(obj, level, color) {
   });
   actions.appendChild(delBtn);
 
-  /* APPEND COLUMNS */
+  /* BUILD HEADER */
   header.appendChild(chev);
   header.appendChild(drag);
-
-  if (level === 2) header.appendChild(chk);
-  else {
-    const placeholder = document.createElement("div");
-    placeholder.className = "checkbox-placeholder";
-    header.appendChild(placeholder);
-  }
-
+  header.appendChild(level === 2 ? chk : document.createElement("div"));
   header.appendChild(name);
-
-  if (level >= 1) header.appendChild(aisleWrapper);
-  else {
-    const aislePlaceholder = document.createElement("div");
-    aislePlaceholder.className = "aisle-placeholder";
-    header.appendChild(aislePlaceholder);
-  }
-
+  header.appendChild(level >= 1 ? aisleWrapper : document.createElement("div"));
   header.appendChild(actions);
+
   li.appendChild(header);
 
-  /* ⭐ SHOPPING QTY INPUT — ONLY FOR CHECKED ITEMS (level 2) */
+  /* ⭐ SHOPPING QTY INPUT — ALWAYS FOR CHECKED ITEMS (level 2) */
   if (level === 2 && obj.checked) {
     const qtyInput = document.createElement("input");
     qtyInput.type = "text";
@@ -1666,19 +1675,17 @@ function renderNode(obj, level, color) {
     qtyInput.className = "qty-input";
 
     qtyInput.addEventListener("input", () => {
-      obj.shopQty = qtyInput.value;   // separate from recipe qty
+      obj.shopQty = qtyInput.value;
       saveModel();
     });
 
     header.appendChild(qtyInput);
   }
 
-  /* CHECKBOX HANDLER (level 2 only) */
+  /* CHECKBOX HANDLER */
   if (chk) {
     chk.addEventListener("change", () => {
       obj.checked = chk.checked;
-
-      // Re-render so checked-only view and main view both get the qty input
       saveModel();
       render();
     });
@@ -1693,8 +1700,7 @@ function renderNode(obj, level, color) {
   const kids = getChildrenForNode(obj, level);
   if (kids) {
     kids.forEach(child => {
-      const childEl = renderNode(child, level + 1, color);
-      childrenList.appendChild(childEl);
+      childrenList.appendChild(renderNode(child, level + 1, color));
     });
   }
 
