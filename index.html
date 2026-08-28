@@ -612,9 +612,9 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-023";
+const SHOP_RENDER_VERSION = "SM-001";
 
-// 2️⃣ Define storage key + model BEFORE loadModel()
+// Define storage key + model BEFORE loadModel()
 const STORAGE_KEY = "sm_stores";
 let dataModel = { stores: [], activeStoreId: null };
 let showCheckedOnlyView = false;
@@ -642,73 +642,38 @@ const aisleOptions =
   '<option value="J20-Back">J20-Back</option>' +
   Array.from({length:35}, (_,i) => `<option value="G${i+1}">G${i+1}</option>`).join('');
 
-/* ---------------------------------------------------------
-   INITIALIZE DEFAULT STORES AND CATEGORIES IF EMPTY
---------------------------------------------------------- */
-if (!localStorage.getItem("sm_stores")) {
-    localStorage.setItem("sm_stores", JSON.stringify([
-        "Walmart",
-        "Twin Oaks",
-        "Home Depot",
-        "Sam's",
-        "Tractor Supply",
-        "Kroger",
-        "Braum's",
-        "Albertson's",
-        "H.E.B.",
-        "Brookshire's",
-        "Dollar General"
-    ]));
-}
-
-if (!localStorage.getItem("sm_categories")) {
-    localStorage.setItem("sm_categories", JSON.stringify([
-        "Baked Goods",
-        "Produce",
-        "Pantry Items",
-        "Beverages",
-        "Breakfast meats",
-        "Dairy",
-        "Refrigerated Items",
-        "Deli Counter",
-        "Fresh Meats",
-        "Frozen Foods",
-        "Paper Supplies",
-        "Cleaning Supplies",
-        "Pet Supplies",
-        "Personal Care",
-        "Kitchen",
-        "Bath",
-        "Electronics",
-        "Clothing",
-        "Automotive",
-        "Tools",
-        "Lawn & Garden"
-    ]));
-}
-
-if (!localStorage.getItem("sm_items")) {
-    localStorage.setItem("sm_items", JSON.stringify([]));
-}
-
 function uid(prefix="id"){ 
   return prefix + "_" + Math.random().toString(36).slice(2,10); 
 }
 
 // 3️⃣ Load the shopping model FIRST
-function loadModel(){
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (raw) {
-    try { dataModel = JSON.parse(raw); }
-    catch(e){ console.warn("parse error", e); dataModel = { stores: [], activeStoreId: null }; }
-  }
+function loadModel() {
+  // Load stores
+  const rawStores = localStorage.getItem("sm_stores");
+  const stores = rawStores ? JSON.parse(rawStores) : [];
+
+  // Load active store ID
+  const rawActive = localStorage.getItem("sm_activeStoreId");
+  const activeId = rawActive ? JSON.parse(rawActive) : null;
+
+  // Build dataModel
+  dataModel = {
+    stores: stores,
+    activeStoreId: activeId
+  };
+
+  // If no stores exist, create Walmart
   if (!dataModel.stores || dataModel.stores.length === 0) {
     const defaultStore = { id: uid("store"), name: "Walmart", categories: [] };
-    dataModel = { stores: [defaultStore], activeStoreId: defaultStore.id };
+    dataModel.stores = [defaultStore];
+    dataModel.activeStoreId = defaultStore.id;
     saveModel();
   }
+
+  // If active store missing, set first store
   if (!dataModel.activeStoreId && dataModel.stores.length) {
     dataModel.activeStoreId = dataModel.stores[0].id;
+    saveModel();
   }
 }
 
@@ -745,12 +710,13 @@ function initSortables(){
   });
 }
 
-function saveModel(){ 
-  try { 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataModel)); 
-  } catch(e){ 
-    console.warn("save failed", e); 
-  } 
+function saveModel() {
+  try {
+    localStorage.setItem("sm_stores", JSON.stringify(dataModel.stores));
+    localStorage.setItem("sm_activeStoreId", JSON.stringify(dataModel.activeStoreId));
+  } catch(e) {
+    console.warn("save failed", e);
+  }
 }
 
 function importRecipeFromUrl() {
