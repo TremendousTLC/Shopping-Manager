@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-011";
+const SHOP_RENDER_VERSION = "SM-012";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1516,16 +1516,16 @@ function renderNode(obj, level, color) {
   drag.style.setProperty("color", levelColor, "important");
   drag.style.setProperty("font-size", dragSize, "important");
 
-  /* COLUMN 3 — CHECKBOX */
+  /* COLUMN 3 — CHECKBOX (ONLY FOR ITEMS, level === 2) */
   let chk = null;
-  if (level >= 1) {
+  if (level === 2) {
     chk = document.createElement("input");
     chk.type = "checkbox";
     chk.className = "node-checkbox";
     chk.checked = !!obj.checked;
   }
 
-  /* COLUMN 4 — NAME */
+  /* COLUMN 4 — NAME (shows recipe qty + unit) */
   const name = document.createElement("div");
   name.className = "node-name";
 
@@ -1544,7 +1544,7 @@ function renderNode(obj, level, color) {
     const nameText = document.createElement("span");
     nameText.className = "name-text";
 
-    // ⭐ Qty + unit display (no labels)
+    // Recipe qty + unit (read-only, from Recipe Manager)
     const qtyUnit = (obj.qty || obj.unit) ? ` (${obj.qty || ""} ${obj.unit || ""})` : "";
     nameText.innerText = (obj.name || "(unnamed)") + qtyUnit;
 
@@ -1553,7 +1553,7 @@ function renderNode(obj, level, color) {
     name.appendChild(nameText);
   }
 
-  /* COLUMN 5 — AISLE */
+  /* COLUMN 5 — AISLE (for levels >= 1) */
   let aisleWrapper = null;
   if (level >= 1) {
     aisleWrapper = document.createElement("div");
@@ -1580,7 +1580,11 @@ function renderNode(obj, level, color) {
   if (level < 4) {
     const addBtn = document.createElement("button");
     addBtn.className = "action-icon add";
-    addBtn.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24"><path d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"/></svg>`;
+    addBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <path d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"/>
+      </svg>
+    `;
     addBtn.addEventListener("click", () => {
       const newNode = createEmptyNodeForLevel(level + 1);
       obj.collapsed = false;
@@ -1601,7 +1605,11 @@ function renderNode(obj, level, color) {
 
   const editBtn = document.createElement("button");
   editBtn.className = "action-icon edit";
-  editBtn.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>`;
+  editBtn.innerHTML = `
+    <svg viewBox="0 0 24 24" width="24" height="24">
+      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/>
+    </svg>
+  `;
   editBtn.addEventListener("click", () => {
     obj._editing = true;
     lastEditingId = obj.id;
@@ -1613,7 +1621,11 @@ function renderNode(obj, level, color) {
 
   const delBtn = document.createElement("button");
   delBtn.className = "action-icon delete";
-  delBtn.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>`;
+  delBtn.innerHTML = `
+    <svg viewBox="0 0 24 24" width="24" height="24">
+      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+    </svg>
+  `;
   delBtn.addEventListener("click", () => {
     if (!confirm("Delete this node and all children?")) return;
     removeNodeByIdFromStore(getActiveStore(), obj.id);
@@ -1625,52 +1637,48 @@ function renderNode(obj, level, color) {
   /* APPEND COLUMNS */
   header.appendChild(chev);
   header.appendChild(drag);
-  header.appendChild(level >= 1 ? chk : document.createElement("div"));
-  header.appendChild(name);
-  header.appendChild(level >= 1 ? aisleWrapper : document.createElement("div"));
-  header.appendChild(actions);
 
+  if (level === 2) header.appendChild(chk);
+  else {
+    const placeholder = document.createElement("div");
+    placeholder.className = "checkbox-placeholder";
+    header.appendChild(placeholder);
+  }
+
+  header.appendChild(name);
+
+  if (level >= 1) header.appendChild(aisleWrapper);
+  else {
+    const aislePlaceholder = document.createElement("div");
+    aislePlaceholder.className = "aisle-placeholder";
+    header.appendChild(aislePlaceholder);
+  }
+
+  header.appendChild(actions);
   li.appendChild(header);
 
-  /* ⭐ ALWAYS RESTORE QTY INPUT WHEN CHECKED */
-  if (level >= 1 && obj.checked) {
+  /* ⭐ SHOPPING QTY INPUT — ONLY FOR CHECKED ITEMS (level 2) */
+  if (level === 2 && obj.checked) {
     const qtyInput = document.createElement("input");
     qtyInput.type = "text";
-    qtyInput.placeholder = "Qty";
-    qtyInput.value = obj.qty || "";
+    qtyInput.placeholder = "Shopping qty";
+    qtyInput.value = obj.shopQty || "";
     qtyInput.className = "qty-input";
 
     qtyInput.addEventListener("input", () => {
-      obj.qty = qtyInput.value;
+      obj.shopQty = qtyInput.value;   // separate from recipe qty
       saveModel();
     });
 
     header.appendChild(qtyInput);
   }
 
-  /* CHECKBOX HANDLER */
+  /* CHECKBOX HANDLER (level 2 only) */
   if (chk) {
     chk.addEventListener("change", () => {
       obj.checked = chk.checked;
 
-      if (chk.checked) {
-        const qtyInput = document.createElement("input");
-        qtyInput.type = "text";
-        qtyInput.placeholder = "Qty";
-        qtyInput.value = obj.qty || "";
-        qtyInput.className = "qty-input";
-
-        qtyInput.addEventListener("input", () => {
-          obj.qty = qtyInput.value;
-          saveModel();
-        });
-
-        header.appendChild(qtyInput);
-      } else {
-        const existing = header.querySelector(".qty-input");
-        if (existing) existing.remove();
-      }
-
+      // Re-render so checked-only view and main view both get the qty input
       saveModel();
       render();
     });
@@ -1685,7 +1693,8 @@ function renderNode(obj, level, color) {
   const kids = getChildrenForNode(obj, level);
   if (kids) {
     kids.forEach(child => {
-      childrenList.appendChild(renderNode(child, level + 1, color));
+      const childEl = renderNode(child, level + 1, color);
+      childrenList.appendChild(childEl);
     });
   }
 
