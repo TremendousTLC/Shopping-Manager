@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-008";
+const SHOP_RENDER_VERSION = "SM-009";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -747,33 +747,32 @@ function importRecipeFromUrl() {
   }
 
   // --------------------------------------------
-  // ENSURE CATEGORY EXISTS IN store.categories
+  // ENSURE TOP-LEVEL "Recipe Imports" CATEGORY EXISTS
   // --------------------------------------------
-  let importCategory = store.categories.find(c => c.id === "import_" + recipeId);
+  let recipeRoot = store.categories.find(c => c.id === "recipe_imports");
 
-  if (!importCategory) {
-    importCategory = {
-      id: "import_" + recipeId,
-      name: incomingRecipe.name,
+  if (!recipeRoot) {
+    recipeRoot = {
+      id: "recipe_imports",
+      name: "Recipe Imports",
       color: "#ffcc66",
       subcategories: []
     };
-    store.categories.push(importCategory);
+    store.categories.push(recipeRoot);
   }
 
-  importCategory.subcategories = importCategory.subcategories || [];
+  // --------------------------------------------
+  // ENSURE SUBCATEGORY FOR THIS SPECIFIC RECIPE
+  // --------------------------------------------
+  let recipeSub = recipeRoot.subcategories.find(s => s.id === "recipe_" + recipeId);
 
-  // --------------------------------------------
-  // ALWAYS USE OR CREATE SUBCATEGORY
-  // --------------------------------------------
-  let subcat = importCategory.subcategories.find(s => s.id === "sub_import");
-  if (!subcat) {
-    subcat = {
-      id: "sub_import",
-      name: "Imported Items",
+  if (!recipeSub) {
+    recipeSub = {
+      id: "recipe_" + recipeId,
+      name: incomingRecipe.name,
       items: []
     };
-    importCategory.subcategories.push(subcat);
+    recipeRoot.subcategories.push(recipeSub);
   }
 
   // --------------------------------------------
@@ -805,7 +804,7 @@ function importRecipeFromUrl() {
     }
 
     items.forEach(item => {
-      subcat.items.push({
+      recipeSub.items.push({
         id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
         name: item.name || item.item || item.text || item.ingredient || "Unnamed",
         qty: item.qty || "",
