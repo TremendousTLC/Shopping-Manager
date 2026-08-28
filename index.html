@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-015";
+const SHOP_RENDER_VERSION = "SM-016";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1242,6 +1242,11 @@ if (showCheckedOnlyView) {
       const li = document.createElement("li");
       li.className = "flat-item checked-row";
 
+      /* ⭐ MAKE ROW A FLEXBOX */
+      li.style.display = "flex";
+      li.style.alignItems = "center";
+      li.style.gap = "12px";
+
       /* CHECKBOX */
       const chk = document.createElement("input");
       chk.type = "checkbox";
@@ -1257,10 +1262,10 @@ if (showCheckedOnlyView) {
       const name = document.createElement("div");
       name.classList.add("checked-name");
       name.style.color = entry.color || "#00e6ff";
-      name.style.maxWidth = "360px";
+      name.style.maxWidth = "260px";
       name.innerText = entry.node.name || "(unnamed)";
 
-      /* SHOPPING QTY — SAME ROW, BEFORE AISLE */
+      /* ⭐ SHOPPING QTY — SAME ROW, BEFORE AISLE */
       const qtyInput = document.createElement("input");
       qtyInput.type = "text";
       qtyInput.placeholder = "Qty";
@@ -1272,8 +1277,6 @@ if (showCheckedOnlyView) {
       qtyInput.style.border = "1px solid #555";
       qtyInput.style.borderRadius = "6px";
       qtyInput.style.padding = "4px 8px";
-      qtyInput.style.marginLeft = "12px";
-      qtyInput.style.marginRight = "12px";
 
       qtyInput.addEventListener("input", () => {
         entry.node.shopQty = qtyInput.value;
@@ -1281,20 +1284,15 @@ if (showCheckedOnlyView) {
       });
 
       /* AISLE BADGE — SAME ROW */
-      const meta = document.createElement("div");
-      meta.className = "match-meta";
-
       const aisleBadge = document.createElement("div");
       aisleBadge.className = "aisle-badge checked-aisle";
       aisleBadge.innerText = entry.aisle || "Aisle";
-
-      meta.appendChild(aisleBadge);
 
       /* BUILD ROW */
       li.appendChild(chk);
       li.appendChild(name);
       li.appendChild(qtyInput);
-      li.appendChild(meta);
+      li.appendChild(aisleBadge);
 
       ul.appendChild(li);
     });
