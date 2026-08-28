@@ -622,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-017";
+const SHOP_RENDER_VERSION = "SM-018";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1579,9 +1579,12 @@ function renderNode(obj, level, color) {
     const nameText = document.createElement("span");
     nameText.className = "name-text";
 
-    const qtyUnit = (obj.qty || obj.unit)
-      ? ` (${obj.qty || ""} ${obj.unit || ""})`
-      : "";
+    const qtyUnit =
+      obj.qty && obj.unit
+        ? ` (${obj.qty} ${obj.unit})`
+        : obj.qty
+          ? ` (${obj.qty})`
+          : "";
 
     nameText.innerText = (obj.name || "(unnamed)") + qtyUnit;
     nameText.style.color = levelColor;
