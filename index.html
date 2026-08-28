@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-013";
+const SHOP_RENDER_VERSION = "SM-014";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1193,7 +1193,6 @@ function render(){
    ========================= */
 if (showCheckedOnlyView) {
 
-    // Hide search results so checked-only view doesn't duplicate items
     const searchResults = document.getElementById("searchResults");
     if (searchResults) searchResults.style.display = "none";
 
@@ -1254,17 +1253,32 @@ if (showCheckedOnlyView) {
         render();
       });
 
-      /* NAME (recipe qty + unit still shows here) */
+      /* NAME (NO recipe qty/unit here) */
       const name = document.createElement("div");
       name.classList.add("checked-name");
       name.style.color = entry.color || "#00e6ff";
       name.style.maxWidth = "360px";
+      name.innerText = entry.node.name || "(unnamed)";
 
-      const qtyUnit = (entry.node.qty || entry.node.unit)
-        ? ` (${entry.node.qty || ""} ${entry.node.unit || ""})`
-        : "";
+      /* SHOPPING QTY INPUT */
+      const qtyInput = document.createElement("input");
+      qtyInput.type = "text";
+      qtyInput.placeholder = "Qty";
+      qtyInput.value = entry.node.shopQty || "";
+      qtyInput.className = "qty-input";
 
-      name.innerText = (entry.node.name || "(unnamed)") + qtyUnit;
+      qtyInput.style.background = "#2a2a2a";
+      qtyInput.style.color = "#fff";
+      qtyInput.style.border = "1px solid #555";
+      qtyInput.style.borderRadius = "6px";
+      qtyInput.style.padding = "4px 8px";
+      qtyInput.style.marginLeft = "12px";
+      qtyInput.style.marginRight = "12px";
+
+      qtyInput.addEventListener("input", () => {
+        entry.node.shopQty = qtyInput.value;
+        saveModel();
+      });
 
       /* AISLE BADGE */
       const meta = document.createElement("div");
@@ -1276,23 +1290,11 @@ if (showCheckedOnlyView) {
 
       meta.appendChild(aisleBadge);
 
-      /* ⭐ SHOPPING QTY INPUT (always shown for checked items) */
-      const qtyInput = document.createElement("input");
-      qtyInput.type = "text";
-      qtyInput.placeholder = "Shopping qty";
-      qtyInput.value = entry.node.shopQty || "";
-      qtyInput.className = "qty-input";
-
-      qtyInput.addEventListener("input", () => {
-        entry.node.shopQty = qtyInput.value;   // does NOT affect recipe qty
-        saveModel();
-      });
-
       /* BUILD ROW */
       li.appendChild(chk);
       li.appendChild(name);
+      li.appendChild(qtyInput);   // ⭐ shopping qty in the middle
       li.appendChild(meta);
-      li.appendChild(qtyInput);
 
       ul.appendChild(li);
     });
@@ -1665,31 +1667,6 @@ function renderNode(obj, level, color) {
   header.appendChild(actions);
 
   li.appendChild(header);
-
-  /* ⭐ SHOPPING QTY INPUT — ALWAYS FOR CHECKED ITEMS (level 2) */
-  if (level === 2 && obj.checked) {
-    const qtyInput = document.createElement("input");
-    qtyInput.type = "text";
-    qtyInput.placeholder = "Shopping qty";
-    qtyInput.value = obj.shopQty || "";
-    qtyInput.className = "qty-input";
-
-    qtyInput.addEventListener("input", () => {
-      obj.shopQty = qtyInput.value;
-      saveModel();
-    });
-
-    header.appendChild(qtyInput);
-  }
-
-  /* CHECKBOX HANDLER */
-  if (chk) {
-    chk.addEventListener("change", () => {
-      obj.checked = chk.checked;
-      saveModel();
-      render();
-    });
-  }
 
   /* CHILDREN */
   const childrenList = document.createElement("ul");
