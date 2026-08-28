@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-010";
+const SHOP_RENDER_VERSION = "SM-011";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1471,15 +1471,14 @@ function tintColor(hex, percent) {
 
 function renderNode(obj, level, color) {
   let levelColor = color;
-  if (level === 1) levelColor = tintColor(color, 0.25);  // Subcategory
-  if (level === 2) levelColor = tintColor(color, 0.45);  // Item
-  if (level === 3) levelColor = tintColor(color, 0.65);  // Kind
-  if (level === 4) levelColor = tintColor(color, 0.80);  // Subkind
+  if (level === 1) levelColor = tintColor(color, 0.25);
+  if (level === 2) levelColor = tintColor(color, 0.45);
+  if (level === 3) levelColor = tintColor(color, 0.65);
+  if (level === 4) levelColor = tintColor(color, 0.80);
 
-  // --- HIERARCHY SIZE SCALING ---
-  let fontSize = "20px";   // Category default
-  let chevSize = "22px";   // Category chevron
-  let dragSize = "20px";   // Category drag handle
+  let fontSize = "20px";
+  let chevSize = "22px";
+  let dragSize = "20px";
 
   if (level === 1) { fontSize = "18px"; chevSize = "20px"; dragSize = "18px"; }
   if (level === 2) { fontSize = "16px"; chevSize = "18px"; dragSize = "16px"; }
@@ -1504,19 +1503,16 @@ function renderNode(obj, level, color) {
     chev.innerText = obj.collapsed ? "▶" : "▼";
     chev.style.setProperty("color", levelColor, "important");
     chev.style.setProperty("font-size", chevSize, "important");
-    chev.style.visibility = "visible";
     chev.onclick = () => { obj.collapsed = !obj.collapsed; render(); };
   } else {
     chev.innerText = "";
     chev.style.visibility = "hidden";
-    chev.onclick = null;
   }
 
   /* COLUMN 2 — DRAG HANDLE */
   const drag = document.createElement("div");
   drag.className = "drag-handle";
   drag.innerText = "☰";
-  drag.title = "Drag";
   drag.style.setProperty("color", levelColor, "important");
   drag.style.setProperty("font-size", dragSize, "important");
 
@@ -1527,7 +1523,6 @@ function renderNode(obj, level, color) {
     chk.type = "checkbox";
     chk.className = "node-checkbox";
     chk.checked = !!obj.checked;
-    chk.title = "Checked";
   }
 
   /* COLUMN 4 — NAME */
@@ -1538,28 +1533,22 @@ function renderNode(obj, level, color) {
     const input = document.createElement("input");
     input.className = "inline-edit";
     input.value = obj.name || "";
-    input.setAttribute("data-edit-id", obj.id);
-
     input.addEventListener("keydown", (ev) => {
-      if (ev.key === "Enter") { ev.preventDefault(); finishInlineEdit(obj, input.value); }
-      else if (ev.key === "Escape") { ev.preventDefault(); cancelInlineEdit(obj); }
+      if (ev.key === "Enter") finishInlineEdit(obj, input.value);
+      if (ev.key === "Escape") cancelInlineEdit(obj);
     });
-
-    input.addEventListener("blur", () => { finishInlineEdit(obj, input.value); });
+    input.addEventListener("blur", () => finishInlineEdit(obj, input.value));
     name.appendChild(input);
 
   } else {
     const nameText = document.createElement("span");
     nameText.className = "name-text";
 
-    // ⭐ SHOW QTY NEXT TO NAME
-    const qtyText = obj.qty ? ` (${obj.qty})` : "";
-    nameText.innerText = (obj.name || "(unnamed)") + qtyText;
+    // ⭐ Qty + unit display (no labels)
+    const qtyUnit = (obj.qty || obj.unit) ? ` (${obj.qty || ""} ${obj.unit || ""})` : "";
+    nameText.innerText = (obj.name || "(unnamed)") + qtyUnit;
 
-    if (level === 3) nameText.classList.add("name-kind");
-    else if (level === 4) nameText.classList.add("name-subkind");
-    else nameText.style.setProperty("color", levelColor, "important");
-
+    nameText.style.setProperty("color", levelColor, "important");
     nameText.style.setProperty("font-size", fontSize, "important");
     name.appendChild(nameText);
   }
@@ -1591,13 +1580,8 @@ function renderNode(obj, level, color) {
   if (level < 4) {
     const addBtn = document.createElement("button");
     addBtn.className = "action-icon add";
-    addBtn.innerHTML = `
-      <svg viewBox="0 0 24 24" width="24" height="24">
-        <path d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"/>
-      </svg>
-    `;
+    addBtn.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24"><path d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"/></svg>`;
     addBtn.addEventListener("click", () => {
-      const store = getActiveStore();
       const newNode = createEmptyNodeForLevel(level + 1);
       obj.collapsed = false;
 
@@ -1617,11 +1601,7 @@ function renderNode(obj, level, color) {
 
   const editBtn = document.createElement("button");
   editBtn.className = "action-icon edit";
-  editBtn.innerHTML = `
-    <svg viewBox="0 0 24 24" width="24" height="24">
-      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/>
-    </svg>
-  `;
+  editBtn.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg>`;
   editBtn.addEventListener("click", () => {
     obj._editing = true;
     lastEditingId = obj.id;
@@ -1633,86 +1613,67 @@ function renderNode(obj, level, color) {
 
   const delBtn = document.createElement("button");
   delBtn.className = "action-icon delete";
-  delBtn.innerHTML = `
-    <svg viewBox="0 0 24 24" width="24" height="24">
-      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-    </svg>
-  `;
+  delBtn.innerHTML = `<svg viewBox="0 0 24 24" width="24" height="24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>`;
   delBtn.addEventListener("click", () => {
     if (!confirm("Delete this node and all children?")) return;
-    const store = getActiveStore();
-    removeNodeByIdFromStore(store, obj.id);
+    removeNodeByIdFromStore(getActiveStore(), obj.id);
     saveModel();
     render();
   });
   actions.appendChild(delBtn);
 
-  /* ====== APPEND GRID COLUMNS ====== */
+  /* APPEND COLUMNS */
   header.appendChild(chev);
   header.appendChild(drag);
-
-  if (level >= 1) header.appendChild(chk);
-  else header.appendChild(document.createElement("div")).className = "checkbox-placeholder";
-
+  header.appendChild(level >= 1 ? chk : document.createElement("div"));
   header.appendChild(name);
-
-  if (level >= 1) header.appendChild(aisleWrapper);
-  else header.appendChild(document.createElement("div")).className = "aisle-placeholder";
-
+  header.appendChild(level >= 1 ? aisleWrapper : document.createElement("div"));
   header.appendChild(actions);
 
   li.appendChild(header);
 
-  /* ⭐ QUANTITY INPUT WHEN CHECKED */
-  if (level >= 1 && chk) {
+  /* ⭐ ALWAYS RESTORE QTY INPUT WHEN CHECKED */
+  if (level >= 1 && obj.checked) {
+    const qtyInput = document.createElement("input");
+    qtyInput.type = "text";
+    qtyInput.placeholder = "Qty";
+    qtyInput.value = obj.qty || "";
+    qtyInput.className = "qty-input";
+
+    qtyInput.addEventListener("input", () => {
+      obj.qty = qtyInput.value;
+      saveModel();
+    });
+
+    header.appendChild(qtyInput);
+  }
+
+  /* CHECKBOX HANDLER */
+  if (chk) {
     chk.addEventListener("change", () => {
       obj.checked = chk.checked;
 
-      // Add qty input when checked
       if (chk.checked) {
-        if (!obj._qtyInput) {
-          const qtyInput = document.createElement("input");
-          qtyInput.type = "text";
-          qtyInput.placeholder = "Qty";
-          qtyInput.value = obj.qty || "";
-          qtyInput.className = "qty-input";
+        const qtyInput = document.createElement("input");
+        qtyInput.type = "text";
+        qtyInput.placeholder = "Qty";
+        qtyInput.value = obj.qty || "";
+        qtyInput.className = "qty-input";
 
-          qtyInput.addEventListener("input", () => {
-            obj.qty = qtyInput.value;
-            saveModel();
-          });
+        qtyInput.addEventListener("input", () => {
+          obj.qty = qtyInput.value;
+          saveModel();
+        });
 
-          obj._qtyInput = qtyInput;
-          header.appendChild(qtyInput);
-        }
+        header.appendChild(qtyInput);
       } else {
-        // Remove qty input when unchecked
-        if (obj._qtyInput) {
-          obj._qtyInput.remove();
-          obj._qtyInput = null;
-        }
+        const existing = header.querySelector(".qty-input");
+        if (existing) existing.remove();
       }
 
       saveModel();
       render();
     });
-
-    // Restore qty input if already checked
-    if (obj.checked) {
-      const qtyInput = document.createElement("input");
-      qtyInput.type = "text";
-      qtyInput.placeholder = "Qty";
-      qtyInput.value = obj.qty || "";
-      qtyInput.className = "qty-input";
-
-      qtyInput.addEventListener("input", () => {
-        obj.qty = qtyInput.value;
-        saveModel();
-      });
-
-      obj._qtyInput = qtyInput;
-      header.appendChild(qtyInput);
-    }
   }
 
   /* CHILDREN */
@@ -1724,14 +1685,12 @@ function renderNode(obj, level, color) {
   const kids = getChildrenForNode(obj, level);
   if (kids) {
     kids.forEach(child => {
-      const childEl = renderNode(child, level + 1, color);
-      childrenList.appendChild(childEl);
+      childrenList.appendChild(renderNode(child, level + 1, color));
     });
   }
 
   return li;
 }
-
 
 function nodeOrDescendantMatches(node){
   // STOP ALL RECURSION AT < 3 CHARS
