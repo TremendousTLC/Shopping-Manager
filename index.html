@@ -622,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-018";
+const SHOP_RENDER_VERSION = "SM-019";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -818,6 +818,7 @@ function importRecipeFromUrl() {
         id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
         name: item.name || item.item || item.text || item.ingredient || "Unnamed",
         qty: item.qty || "",
+		unit: item.unit || "", 
         aisle: item.aisle || "Misc",
         checked: false,
         kinds: []
