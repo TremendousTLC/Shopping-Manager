@@ -253,12 +253,15 @@ body { background:var(--bg);
    flex: 1;
    min-width: 0;
    max-width: 600px;
+
    display: flex;
    align-items: center;
    gap: 8px;
-   text-overflow: ellipsis;
-   white-space: nowrap;
-   overflow: hidden; }
+
+   white-space: normal !important;
+   overflow: visible !important;
+   text-overflow: unset !important;
+}
 
 .node-actions {
    display: flex;
@@ -390,18 +393,6 @@ body { background:var(--bg);
    flex-direction:column;
    gap:6px; }
 
-.checked-row {
-   max-width: 1080px !important;  /* max width test */
-   display: grid !important;
-   margin-left: 0px;
-   padding-left: 0;
-   grid-template-columns: 
-      24px
-      minmax(0, 1fr)    /* test */
-      60px; 
-   gap: 1px;
-   align-items: center; }
-
 .checked-name {
    white-space: nowrap;
    min-width: 0; }
@@ -409,9 +400,43 @@ body { background:var(--bg);
 .checked-aisle {
    margin-left: 0;
    padding-left: 0; }
+   
+.checked-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100%;
+}
 
+.flat-item.checked-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100%;
+}
 
+.checked-row .aisle-badge {
+    display: inline-flex !important;
+    align-items: center;
+    white-space: nowrap;
+}
 
+.checked-row .checked-name {
+    flex: 1;
+    min-width: 0;
+}
+
+.checked-row .qty-input {
+    background: #2a2a2a;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 14px;
+    white-space: nowrap;
+}
 
 
 @media (max-width:800px) {
@@ -464,21 +489,7 @@ body { background:var(--bg);
   }
 }
 
-
-
 @media (max-width:800px) {
-
-  /* CHECKED-ONLY ROW (no chevron, no drag, no actions) */
-  .checked-row {
-    display: grid !important;
-    grid-template-columns:
-      28px          /* checkbox */
-      minmax(0,1fr) /* name wraps */
-      60px;         /* aisle (tight, clean alignment) */
-    gap: 6px;
-    align-items: center;
-    width: 100% !important;
-  }
 
   /* NAME WRAPS CLEANLY */
   .checked-name {
@@ -494,7 +505,6 @@ body { background:var(--bg);
     text-align: right;
   }
 }
-
 
   </style>
 
@@ -612,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-016";
+const SHOP_RENDER_VERSION = "SM-017";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
