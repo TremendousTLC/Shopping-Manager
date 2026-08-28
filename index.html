@@ -622,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-019";
+const SHOP_RENDER_VERSION = "SM-020";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1269,12 +1269,19 @@ if (showCheckedOnlyView) {
         render();
       });
 
-      /* NAME — NO recipe qty/unit */
+      /* NAME — with recipe qty/unit */
       const name = document.createElement("div");
       name.classList.add("checked-name");
       name.style.color = entry.color || "#00e6ff";
-      name.style.maxWidth = "260px";
-      name.innerText = entry.node.name || "(unnamed)";
+      name.style.maxWidth = "340px";
+      const qtyUnit =
+        entry.node.qty && entry.node.unit
+          ? ` (${entry.node.qty} ${entry.node.unit})`
+          : entry.node.qty
+            ? ` (${entry.node.qty})`
+            : "";
+
+      name.innerText = (entry.node.name || "(unnamed)") + qtyUnit;
 
       /* ⭐ SHOPPING QTY — SAME ROW, BEFORE AISLE */
       const qtyInput = document.createElement("input");
@@ -1288,6 +1295,8 @@ if (showCheckedOnlyView) {
       qtyInput.style.border = "1px solid #555";
       qtyInput.style.borderRadius = "6px";
       qtyInput.style.padding = "4px 8px";
+	  qtyInput.style.width = "48px";     // ⭐ perfect for 3 digits
+	  qtyInput.style.textAlign = "center";
 
       qtyInput.addEventListener("input", () => {
         entry.node.shopQty = qtyInput.value;
