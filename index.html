@@ -622,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-020";
+const SHOP_RENDER_VERSION = "SM-021";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1307,6 +1307,10 @@ if (showCheckedOnlyView) {
       const aisleBadge = document.createElement("div");
       aisleBadge.className = "aisle-badge checked-aisle";
       aisleBadge.innerText = entry.aisle || "Aisle";
+	  aisleBadge.style.textAlign = "center";
+	  aisleBadge.style.display = "flex";
+	  aisleBadge.style.alignItems = "center";
+	  aisleBadge.style.justifyContent = "center";
 
       /* BUILD ROW */
       li.appendChild(chk);
