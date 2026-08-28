@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-007";
+const SHOP_RENDER_VERSION = "SM-008";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -777,14 +777,32 @@ function importRecipeFromUrl() {
   }
 
   // --------------------------------------------
-  // ALWAYS APPEND INGREDIENTS
+  // ALWAYS APPEND INGREDIENTS — BULLETPROOF FORMAT HANDLING
   // --------------------------------------------
   incomingRecipe.ingredients.forEach(group => {
 
-    // Handle both formats:
-    // 1. { items: [...] }
-    // 2. [ { name: ... }, ... ]
-    const items = Array.isArray(group.items) ? group.items : group;
+    let items;
+
+    // Format 1: { items: [...] }
+    if (Array.isArray(group.items)) {
+      items = group.items;
+
+    // Format 2: [ {...}, {...} ]
+    } else if (Array.isArray(group)) {
+      items = group;
+
+    // Format 3: single object { name: "Tomatoes" }
+    } else if (group && typeof group === "object") {
+      items = [group];
+
+    // Format 4: string "Tomatoes"
+    } else if (typeof group === "string") {
+      items = [{ name: group }];
+
+    // Unknown format → skip
+    } else {
+      items = [];
+    }
 
     items.forEach(item => {
       subcat.items.push({
