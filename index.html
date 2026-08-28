@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-005";
+const SHOP_RENDER_VERSION = "SM-006";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -752,53 +752,54 @@ function importRecipeFromUrl() {
     return;
   }
 
-  store.items = store.items || [];
-  store.categories = store.categories || [];
-  store.aisles = store.aisles || [];
-  store.recipeImports = store.recipeImports || [];
+  // --------------------------------------------
+  // ENSURE CATEGORY EXISTS IN store.categories
+  // --------------------------------------------
+  let importCategory = store.categories.find(c => c.id === "import_" + recipeId);
 
-  const importCategory = {
-    id: "import_" + recipeId,
-    name: incomingRecipe.name,
-    color: "#ffcc66"
-  };
-
-  if (!store.categories.find(c => c.id === importCategory.id)) {
+  if (!importCategory) {
+    importCategory = {
+      id: "import_" + recipeId,
+      name: incomingRecipe.name,
+      color: "#ffcc66",
+      subcategories: []
+    };
     store.categories.push(importCategory);
   }
 
+  // Always ensure subcategories array exists
+  importCategory.subcategories = importCategory.subcategories || [];
+
+  // --------------------------------------------
+  // CREATE OR FIND SUBCATEGORY FOR IMPORTED ITEMS
+  // --------------------------------------------
+  let subcat = importCategory.subcategories.find(s => s.id === "sub_import");
+  if (!subcat) {
+    subcat = {
+      id: "sub_import",
+      name: "Imported Items",
+      items: []
+    };
+    importCategory.subcategories.push(subcat);
+  }
+
+  // --------------------------------------------
+  // ADD INGREDIENTS INTO THE HIERARCHICAL STRUCTURE
+  // --------------------------------------------
   incomingRecipe.ingredients.forEach(group => {
     const items = group.items || group;
 
     items.forEach(item => {
-// Ensure category has subcategories
-importCategory.subcategories = importCategory.subcategories || [];
-
-// Use a single subcategory for recipe items
-let subcat = importCategory.subcategories.find(s => s.id === "sub_import");
-if (!subcat) {
-  subcat = {
-    id: "sub_import",
-    name: "Imported Items",
-    items: []
-  };
-  importCategory.subcategories.push(subcat);
-}
-
-// Add item into hierarchical structure
-subcat.items.push({
-  id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
-  name: item.name || item.item || item.text || item.ingredient || "Unnamed",
-  qty: item.qty || "",
-  aisle: item.aisle || "Misc",
-  checked: false,
-  kinds: []   // required by normalizeStore()
-});
-
+      subcat.items.push({
+        id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
+        name: item.name || item.item || item.text || item.ingredient || "Unnamed",
+        qty: item.qty || "",
+        aisle: item.aisle || "Misc",
+        checked: false,
+        kinds: []   // required by normalizeStore()
+      });
     });
   });
-
-  store.activeCategoryId = importCategory.id;
 
   saveModel();
   render();
@@ -2269,11 +2270,9 @@ setTimeout(() => {
   if (typeof initApp === "function") initApp();
 }, 0);
 
-// TEMP CLEANUP — RUN ONCE
-dataModel.stores.forEach(store => {
-  store.categories = store.categories.filter(c => c.name !== "Recipe Imports");
-});
-saveModel();
+loadModel();
+importRecipeFromUrl();
+render();
 
 </script>
 </body>
