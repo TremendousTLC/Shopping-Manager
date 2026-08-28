@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-004";
+const SHOP_RENDER_VERSION = "SM-005";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -771,14 +771,30 @@ function importRecipeFromUrl() {
     const items = group.items || group;
 
     items.forEach(item => {
-      store.items.push({
-        id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
-        name: item.name || item.item || item.text || item.ingredient || "Unnamed",
-        qty: item.qty || "",
-        aisle: item.aisle || "Misc",
-        checked: false,
-        categoryId: importCategory.id
-      });
+// Ensure category has subcategories
+importCategory.subcategories = importCategory.subcategories || [];
+
+// Use a single subcategory for recipe items
+let subcat = importCategory.subcategories.find(s => s.id === "sub_import");
+if (!subcat) {
+  subcat = {
+    id: "sub_import",
+    name: "Imported Items",
+    items: []
+  };
+  importCategory.subcategories.push(subcat);
+}
+
+// Add item into hierarchical structure
+subcat.items.push({
+  id: "itm_" + Date.now() + "_" + Math.random().toString(36).slice(2),
+  name: item.name || item.item || item.text || item.ingredient || "Unnamed",
+  qty: item.qty || "",
+  aisle: item.aisle || "Misc",
+  checked: false,
+  kinds: []   // required by normalizeStore()
+});
+
     });
   });
 
