@@ -612,7 +612,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-009";
+const SHOP_RENDER_VERSION = "SM-010";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1476,32 +1476,15 @@ function renderNode(obj, level, color) {
   if (level === 3) levelColor = tintColor(color, 0.65);  // Kind
   if (level === 4) levelColor = tintColor(color, 0.80);  // Subkind
 
-// --- HIERARCHY SIZE SCALING ---
-let fontSize = "20px";   // Category default
-let chevSize = "22px";   // Category chevron
-let dragSize = "20px";   // Category drag handle
+  // --- HIERARCHY SIZE SCALING ---
+  let fontSize = "20px";   // Category default
+  let chevSize = "22px";   // Category chevron
+  let dragSize = "20px";   // Category drag handle
 
-if (level === 1) {        // Subcategory
-  fontSize = "18px";
-  chevSize = "20px";
-  dragSize = "18px";
-}
-if (level === 2) {        // Item
-  fontSize = "16px";
-  chevSize = "18px";
-  dragSize = "16px";
-}
-if (level === 3) {        // Kind
-  fontSize = "15px";
-  chevSize = "16px";
-  dragSize = "15px";
-}
-if (level === 4) {        // Subkind
-  fontSize = "14px";
-  chevSize = "14px";
-  dragSize = "14px";
-}
-
+  if (level === 1) { fontSize = "18px"; chevSize = "20px"; dragSize = "18px"; }
+  if (level === 2) { fontSize = "16px"; chevSize = "18px"; dragSize = "16px"; }
+  if (level === 3) { fontSize = "15px"; chevSize = "16px"; dragSize = "15px"; }
+  if (level === 4) { fontSize = "14px"; chevSize = "14px"; dragSize = "14px"; }
 
   const li = document.createElement("li");
   li.className = "node";
@@ -1517,7 +1500,7 @@ if (level === 4) {        // Subkind
   chev.className = "chev";
   const childCount = countChildrenForNode(obj, level);
 
-  if (childCount > 0) {   // FIXED
+  if (childCount > 0) {
     chev.innerText = obj.collapsed ? "▶" : "▼";
     chev.style.setProperty("color", levelColor, "important");
     chev.style.setProperty("font-size", chevSize, "important");
@@ -1537,7 +1520,7 @@ if (level === 4) {        // Subkind
   drag.style.setProperty("color", levelColor, "important");
   drag.style.setProperty("font-size", dragSize, "important");
 
-  /* COLUMN 3 — CHECKBOX OR PLACEHOLDER */
+  /* COLUMN 3 — CHECKBOX */
   let chk = null;
   if (level >= 1) {
     chk = document.createElement("input");
@@ -1545,11 +1528,6 @@ if (level === 4) {        // Subkind
     chk.className = "node-checkbox";
     chk.checked = !!obj.checked;
     chk.title = "Checked";
-    chk.addEventListener("change", () => {
-      obj.checked = chk.checked;
-      saveModel();
-      render();
-    });
   }
 
   /* COLUMN 4 — NAME */
@@ -1563,13 +1541,8 @@ if (level === 4) {        // Subkind
     input.setAttribute("data-edit-id", obj.id);
 
     input.addEventListener("keydown", (ev) => {
-      if (ev.key === "Enter") {
-        ev.preventDefault();
-        finishInlineEdit(obj, input.value);
-      } else if (ev.key === "Escape") {
-        ev.preventDefault();
-        cancelInlineEdit(obj);
-      }
+      if (ev.key === "Enter") { ev.preventDefault(); finishInlineEdit(obj, input.value); }
+      else if (ev.key === "Escape") { ev.preventDefault(); cancelInlineEdit(obj); }
     });
 
     input.addEventListener("blur", () => { finishInlineEdit(obj, input.value); });
@@ -1578,17 +1551,20 @@ if (level === 4) {        // Subkind
   } else {
     const nameText = document.createElement("span");
     nameText.className = "name-text";
-    nameText.innerText = obj.name || "(unnamed)";
+
+    // ⭐ SHOW QTY NEXT TO NAME
+    const qtyText = obj.qty ? ` (${obj.qty})` : "";
+    nameText.innerText = (obj.name || "(unnamed)") + qtyText;
 
     if (level === 3) nameText.classList.add("name-kind");
     else if (level === 4) nameText.classList.add("name-subkind");
     else nameText.style.setProperty("color", levelColor, "important");
-nameText.style.setProperty("font-size", fontSize, "important");
 
+    nameText.style.setProperty("font-size", fontSize, "important");
     name.appendChild(nameText);
   }
 
-  /* COLUMN 5 — AISLE OR PLACEHOLDER */
+  /* COLUMN 5 — AISLE */
   let aisleWrapper = null;
   if (level >= 1) {
     aisleWrapper = document.createElement("div");
@@ -1596,8 +1572,6 @@ nameText.style.setProperty("font-size", fontSize, "important");
 
     const sel = document.createElement("select");
     sel.className = "aisle-select";
-
-    // Correct aisle list
     sel.innerHTML = aisleOptions;
     sel.value = obj.aisle || "";
 
@@ -1610,106 +1584,136 @@ nameText.style.setProperty("font-size", fontSize, "important");
     aisleWrapper.appendChild(sel);
   }
 
-/* COLUMN 6 — ACTIONS (SVG ICONS, Example A order) */
-const actions = document.createElement("div");
+  /* COLUMN 6 — ACTIONS */
+  const actions = document.createElement("div");
+  actions.className = "node-actions";
 
-actions.className = "node-actions";
+  if (level < 4) {
+    const addBtn = document.createElement("button");
+    addBtn.className = "action-icon add";
+    addBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <path d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"/>
+      </svg>
+    `;
+    addBtn.addEventListener("click", () => {
+      const store = getActiveStore();
+      const newNode = createEmptyNodeForLevel(level + 1);
+      obj.collapsed = false;
 
-/* ADD BUTTON (only for levels 0–3) */
-if (level < 4) {
-  const addBtn = document.createElement("button");
-  addBtn.className = "action-icon add";
+      if (level === 0) { obj.subcategories = obj.subcategories || []; obj.subcategories.push(newNode); }
+      else if (level === 1) { obj.items = obj.items || []; obj.items.push(newNode); }
+      else if (level === 2) { obj.kinds = obj.kinds || []; obj.kinds.push(newNode); }
+      else if (level === 3) { obj.subkinds = obj.subkinds || []; obj.subkinds.push(newNode); }
 
-  addBtn.innerHTML = `
+      newNode._editing = true;
+      lastEditingId = newNode.id;
+      expandAncestorsOf(obj.id);
+      saveModel();
+      render();
+    });
+    actions.appendChild(addBtn);
+  }
+
+  const editBtn = document.createElement("button");
+  editBtn.className = "action-icon edit";
+  editBtn.innerHTML = `
     <svg viewBox="0 0 24 24" width="24" height="24">
-      <path d="M19 11H13V5h-2v6H5v2h6v6h2v-6h6z"/>
+      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/>
     </svg>
   `;
-
-  addBtn.addEventListener("click", () => {
-    const store = getActiveStore();
-    const newNode = createEmptyNodeForLevel(level + 1);
-    obj.collapsed = false;
-
-    if (level === 0) { if (!obj.subcategories) obj.subcategories = []; obj.subcategories.push(newNode); }
-    else if (level === 1) { if (!obj.items) obj.items = []; obj.items.push(newNode); }
-    else if (level === 2) { if (!obj.kinds) obj.kinds = []; obj.kinds.push(newNode); }
-    else if (level === 3) { if (!obj.subkinds) obj.subkinds = []; obj.subkinds.push(newNode); }
-
-    newNode._editing = true;
-    lastEditingId = newNode.id;
+  editBtn.addEventListener("click", () => {
+    obj._editing = true;
+    lastEditingId = obj.id;
     expandAncestorsOf(obj.id);
     saveModel();
     render();
   });
+  actions.appendChild(editBtn);
 
-  actions.appendChild(addBtn);
-}
+  const delBtn = document.createElement("button");
+  delBtn.className = "action-icon delete";
+  delBtn.innerHTML = `
+    <svg viewBox="0 0 24 24" width="24" height="24">
+      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+    </svg>
+  `;
+  delBtn.addEventListener("click", () => {
+    if (!confirm("Delete this node and all children?")) return;
+    const store = getActiveStore();
+    removeNodeByIdFromStore(store, obj.id);
+    saveModel();
+    render();
+  });
+  actions.appendChild(delBtn);
 
-/* EDIT BUTTON */
-const editBtn = document.createElement("button");
-editBtn.className = "action-icon edit";
-
-editBtn.innerHTML = `
-  <svg viewBox="0 0 24 24" width="24" height="24">
-    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/>
-  </svg>
-`;
-
-editBtn.addEventListener("click", () => {
-  obj._editing = true;
-  lastEditingId = obj.id;
-  expandAncestorsOf(obj.id);
-  saveModel();
-  render();
-});
-
-actions.appendChild(editBtn);
-
-/* DELETE BUTTON */
-const delBtn = document.createElement("button");
-delBtn.className = "action-icon delete";
-
-delBtn.innerHTML = `
-  <svg viewBox="0 0 24 24" width="24" height="24">
-    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-  </svg>
-`;
-
-delBtn.addEventListener("click", () => {
-  if (!confirm("Delete this node and all children?")) return;
-  const store = getActiveStore();
-  removeNodeByIdFromStore(store, obj.id);
-  saveModel();
-  render();
-});
-
-actions.appendChild(delBtn);
-
-  /* ====== APPEND GRID COLUMNS IN ORDER ====== */
-
+  /* ====== APPEND GRID COLUMNS ====== */
   header.appendChild(chev);
   header.appendChild(drag);
 
   if (level >= 1) header.appendChild(chk);
-  else {
-    const checkboxPlaceholder = document.createElement("div");
-    checkboxPlaceholder.className = "checkbox-placeholder";
-    header.appendChild(checkboxPlaceholder);
-  }
+  else header.appendChild(document.createElement("div")).className = "checkbox-placeholder";
 
   header.appendChild(name);
 
   if (level >= 1) header.appendChild(aisleWrapper);
-  else {
-    const aislePlaceholder = document.createElement("div");
-    aislePlaceholder.className = "aisle-placeholder";
-    header.appendChild(aislePlaceholder);
-  }
+  else header.appendChild(document.createElement("div")).className = "aisle-placeholder";
 
   header.appendChild(actions);
 
   li.appendChild(header);
+
+  /* ⭐ QUANTITY INPUT WHEN CHECKED */
+  if (level >= 1 && chk) {
+    chk.addEventListener("change", () => {
+      obj.checked = chk.checked;
+
+      // Add qty input when checked
+      if (chk.checked) {
+        if (!obj._qtyInput) {
+          const qtyInput = document.createElement("input");
+          qtyInput.type = "text";
+          qtyInput.placeholder = "Qty";
+          qtyInput.value = obj.qty || "";
+          qtyInput.className = "qty-input";
+
+          qtyInput.addEventListener("input", () => {
+            obj.qty = qtyInput.value;
+            saveModel();
+          });
+
+          obj._qtyInput = qtyInput;
+          header.appendChild(qtyInput);
+        }
+      } else {
+        // Remove qty input when unchecked
+        if (obj._qtyInput) {
+          obj._qtyInput.remove();
+          obj._qtyInput = null;
+        }
+      }
+
+      saveModel();
+      render();
+    });
+
+    // Restore qty input if already checked
+    if (obj.checked) {
+      const qtyInput = document.createElement("input");
+      qtyInput.type = "text";
+      qtyInput.placeholder = "Qty";
+      qtyInput.value = obj.qty || "";
+      qtyInput.className = "qty-input";
+
+      qtyInput.addEventListener("input", () => {
+        obj.qty = qtyInput.value;
+        saveModel();
+      });
+
+      obj._qtyInput = qtyInput;
+      header.appendChild(qtyInput);
+    }
+  }
 
   /* CHILDREN */
   const childrenList = document.createElement("ul");
@@ -1717,10 +1721,9 @@ actions.appendChild(delBtn);
   childrenList.dataset.acceptLevel = Math.min(level + 1, 4);
   li.appendChild(childrenList);
 
-  /* RECURSE */
   const kids = getChildrenForNode(obj, level);
   if (kids) {
-    kids.forEach((child) => {
+    kids.forEach(child => {
       const childEl = renderNode(child, level + 1, color);
       childrenList.appendChild(childEl);
     });
@@ -1728,6 +1731,7 @@ actions.appendChild(delBtn);
 
   return li;
 }
+
 
 function nodeOrDescendantMatches(node){
   // STOP ALL RECURSION AT < 3 CHARS
