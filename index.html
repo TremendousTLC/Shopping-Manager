@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 13</title>
+  <title>Shopping List 14</title>
 
   <style>
 .store-title {
@@ -1295,7 +1295,7 @@ if (showCheckedOnlyView) {
       const chk = document.createElement("input");
       chk.type = "checkbox";
       chk.className = "node-checkbox";
-      chk.checked = !!entry.node.checked;
+      chk.checked = !!(entry.node.checked || entry.node.recipeChecked);
       chk.addEventListener("change", () => {
         entry.node.checked = chk.checked;
         saveModel();
@@ -1522,6 +1522,23 @@ function renderNode(obj, level, color) {
 
     name.appendChild(nameText);
   }
+  
+  /* CHECK ALL BUTTON — ONLY FOR CATEGORY OR RECIPE ROOT */
+if (level === 0) {
+  const checkAllBtn = document.createElement("button");
+  checkAllBtn.className = "btn tiny";
+  checkAllBtn.innerText = "✓ All";
+  checkAllBtn.style.marginLeft = "10px";
+  checkAllBtn.style.padding = "2px 6px";
+  checkAllBtn.style.fontSize = "12px";
+
+  checkAllBtn.addEventListener("click", (e) => {
+    e.stopPropagation(); // prevent collapsing the category
+    checkAllInRecipe(obj);
+  });
+
+  name.appendChild(checkAllBtn);
+}
 
   /* AISLE */
   let aisleWrapper = null;
@@ -1688,19 +1705,55 @@ function collectCheckedNodes(store){
 
     if (cat.subcategories) {
       cat.subcategories.forEach(sub => {
-        if (sub.checked) out.push({ node: sub, level:1, levelLabel:"Subcategory", categoryName:catName, color, aisle: getAisleForNode(store, sub.id) });
+        if (sub.checked || sub.recipeChecked) {
+          out.push({
+            node: sub,
+            level: 1,
+            levelLabel: "Subcategory",
+            categoryName: catName,
+            color,
+            aisle: getAisleForNode(store, sub.id)
+          });
+        }
 
         if (sub.items) {
           sub.items.forEach(it => {
-            if (it.checked) out.push({ node: it, level:2, levelLabel:"Item", categoryName:catName, color, aisle: getAisleForNode(store, it.id) });
+            if (it.checked || it.recipeChecked) {
+              out.push({
+                node: it,
+                level: 2,
+                levelLabel: "Item",
+                categoryName: catName,
+                color,
+                aisle: getAisleForNode(store, it.id)
+              });
+            }
 
             if (it.kinds) {
               it.kinds.forEach(k => {
-                if (k.checked) out.push({ node: k, level:3, levelLabel:"Kind", categoryName:catName, color, aisle: getAisleForNode(store, k.id) });
+                if (k.checked || k.recipeChecked) {
+                  out.push({
+                    node: k,
+                    level: 3,
+                    levelLabel: "Kind",
+                    categoryName: catName,
+                    color,
+                    aisle: getAisleForNode(store, k.id)
+                  });
+                }
 
                 if (k.subkinds) {
                   k.subkinds.forEach(sk => {
-                    if (sk.checked) out.push({ node: sk, level:4, levelLabel:"Subkind", categoryName:catName, color, aisle: getAisleForNode(store, sk.id) });
+                    if (sk.checked || sk.recipeChecked) {
+                      out.push({
+                        node: sk,
+                        level: 4,
+                        levelLabel: "Subkind",
+                        categoryName: catName,
+                        color,
+                        aisle: getAisleForNode(store, sk.id)
+                      });
+                    }
                   });
                 }
               });
@@ -1761,6 +1814,23 @@ function moveNodeToInStore(nodeId, parentId, acceptLevel, index){
     parentObj.subkinds.splice(index,0,node);
     return;
   }
+}
+
+function checkAllInRecipe(recipeNode) {
+  function mark(node) {
+    if (!node) return;
+
+    node.checked = true;
+
+    if (node.subcategories) node.subcategories.forEach(mark);
+    if (node.items) node.items.forEach(mark);
+    if (node.kinds) node.kinds.forEach(mark);
+    if (node.subkinds) node.subkinds.forEach(mark);
+  }
+
+  mark(recipeNode);
+  saveModel();
+  render();
 }
 
 /* =========================
