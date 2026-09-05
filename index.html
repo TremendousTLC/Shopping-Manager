@@ -622,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-003";
+const SHOP_RENDER_VERSION = "SM-004";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1480,13 +1480,20 @@ if (searchQuery && searchQuery.length >= 3) {
 
 function renderFiltered(nodes) {
     const root = document.getElementById("listRoot");
+
+    if (!root) {
+        console.error("renderFiltered: listRoot not found");
+        return;  // ⭐ prevents crash
+    }
+
     root.innerHTML = "";
 
     nodes.forEach(entry => {
-        const row = buildRow(entry.node); // your existing row builder
-        root.appendChild(row);
+        const row = buildRow(entry.node);  // your existing row builder
+        if (row) root.appendChild(row);
     });
 }
+
 
 function getChildrenForNode(obj, level) {
   if (level === 0) return obj.subcategories || [];
