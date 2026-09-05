@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 19</title>
+  <title>Shopping List 20</title>
 
   <style>
 .store-title {
@@ -1454,20 +1454,20 @@ function renderNode(obj, level, color) {
   const header = document.createElement("div");
   header.className = "node-header";
 
-  /* CHEVRON */
-  const chev = document.createElement("div");
-  chev.className = "chev";
-  const childCount = countChildrenForNode(obj, level);
+/* CHEVRON */
+const chev = document.createElement("div");
+chev.className = "chev";
+const childCount = countChildrenForNode(obj, level);
 
-  if (childCount > 0) {
-    chev.innerText = obj.collapsed ? "▶" : "▼";
-    chev.style.color = levelColor;
-    chev.style.fontSize = chevSize;
-    chev.onclick = () => { obj.collapsed = !obj.collapsed; render(); };
-  } else {
-    chev.innerText = "";
-    chev.style.visibility = "hidden";
-  }
+if (childCount > 0) {
+  chev.innerText = obj.collapsed ? "▶" : "▼";
+  chev.style.color = levelColor;
+  chev.style.fontSize = chevSize;
+  chev.onclick = () => { obj.collapsed = !obj.collapsed; render(); };
+} else {
+  // placeholder keeps grid alignment perfect
+  chev.innerHTML = "&nbsp;";
+}
 
   /* DRAG HANDLE */
   const drag = document.createElement("div");
