@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 7</title>
+  <title>Shopping List 8</title>
 
   <style>
 .store-title {
@@ -1499,7 +1499,7 @@ function renderFiltered(nodes) {
     root.innerHTML = "";
 
     nodes.forEach(entry => {
-        const row = buildRow(entry.node);  // your existing row builder
+        const row = renderNode(entry.node, entry.level, entry.color);
         if (row) root.appendChild(row);
     });
 }
