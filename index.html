@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 14</title>
+  <title>Shopping List 15</title>
 
   <style>
 .store-title {
@@ -1523,8 +1523,8 @@ function renderNode(obj, level, color) {
     name.appendChild(nameText);
   }
   
-  /* CHECK ALL BUTTON — ONLY FOR CATEGORY OR RECIPE ROOT */
-if (level === 0) {
+/* CHECK ALL BUTTON — ONLY FOR RECIPE NAMES */
+if (level === 1 && obj.parentName === "Recipe Imports") {
   const checkAllBtn = document.createElement("button");
   checkAllBtn.className = "btn tiny";
   checkAllBtn.innerText = "✓ All";
@@ -1533,7 +1533,7 @@ if (level === 0) {
   checkAllBtn.style.fontSize = "12px";
 
   checkAllBtn.addEventListener("click", (e) => {
-    e.stopPropagation(); // prevent collapsing the category
+    e.stopPropagation(); // prevent collapsing
     checkAllInRecipe(obj);
   });
 
