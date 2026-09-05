@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 30</title>
+  <title>Shopping List 31</title>
 
   <style>
 ul, li {
@@ -350,6 +350,12 @@ body { background:var(--bg);
   overflow-x: auto;
   white-space: nowrap; }
 
+.aisle-slot {
+    width: 200px;   /* match your grid-template-columns */
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+
 .aisle-wrapper {
    display:flex;
    align-items:center;
@@ -369,7 +375,7 @@ body { background:var(--bg);
    box-sizing: border-box;
    cursor: pointer;
    text-align:center;
-
+   
   /* Remove native arrow */
    appearance: none !important;
    -webkit-appearance: none !important;
@@ -1344,12 +1350,15 @@ if (showCheckedOnlyView) {
 const chkSlot = document.createElement("div");
 chkSlot.className = "checkbox-slot";
 
-/* Put checkbox inside the slot */
-chkSlot.appendChild(chk);
+/* If chk exists, append it. Otherwise append a placeholder. */
+if (chk instanceof Node) {
+    chkSlot.appendChild(chk);
+} else {
+    chkSlot.appendChild(document.createElement("div"));
+}
 
 /* Append slot to header */
 header.appendChild(chkSlot);
-
 
       /* NAME — with recipe qty/unit */
       const name = document.createElement("div");
@@ -1658,6 +1667,20 @@ if (level === 1 && obj.parentName === "Recipe Imports") {
 
     aisleWrapper.appendChild(sel);
   }
+
+/* AISLE SLOT — ALWAYS EXISTS */
+const aisleSlot = document.createElement("div");
+aisleSlot.className = "aisle-slot";
+
+/* If aisleWrapper exists, append it. Otherwise append a placeholder. */
+if (aisleWrapper instanceof Node) {
+    aisleSlot.appendChild(aisleWrapper);
+} else {
+    aisleSlot.appendChild(document.createElement("div"));
+}
+
+/* Append slot to header */
+header.appendChild(aisleSlot);
 
   /* ACTIONS */
   const actions = document.createElement("div");
