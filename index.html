@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 34</title>
+  <title>Shopping List 35</title>
 
   <style>
 ul, li {
@@ -310,12 +310,13 @@ body { background:var(--bg);
 .node-header {
     display: grid;
     grid-template-columns:
-        28px              /* checkbox placeholder */
-        34px              /* chevron */
-        28px              /* drag handle */
-        28px              /* checkbox */
-        minmax(160px, 1fr)/* name */
-        90px;             /* actions */
+        28px              /* 1. checkbox-slot */
+        72px              /* 2. aisle-slot */
+        34px              /* 3. chevron */
+        28px              /* 4. drag-handle */
+        minmax(200px, 1fr)/* 5. name (flex column) */
+        72px              /* 6. aisle-wrapper */
+        90px;             /* 7. actions */
 
     align-items: center;
     gap: 4px;
