@@ -622,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-005";
+const SHOP_RENDER_VERSION = "SM-006";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1099,7 +1099,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInput");
     const clearSearchBtn = document.getElementById("clearSearchBtn");
 
-    // ⭐ HARD STOP: only run search if listRoot exists
+    // ⭐ Only run search if listRoot exists AND we are on Shopping Manager page
     const listRoot = document.getElementById("listRoot");
     if (!listRoot) {
         console.warn("Search disabled: listRoot not found on this page");
@@ -1108,31 +1108,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!searchInput) return;
 
-    // SEARCH INPUT HANDLER
     searchInput.addEventListener("input", (e) => {
         setSearchQuery(e.target.value);
 
         const store = getActiveStore();
         if (!store) return;
 
-        // EXIT SEARCH WHEN < 3 CHARS
+        // ⭐ HARD STOP: do NOT run filtered render unless >= 3 chars
         if (!searchQuery || searchQuery.length < 3) {
-            document.getElementById("searchResults").innerHTML = "";
-            render();   // restore full list
+            render();   // normal full render
             return;
         }
 
-        // RUN SEARCH
+        // ⭐ Now safe to run filtered search
         render();
     });
 
-    // CLEAR SEARCH BUTTON HANDLER
     if (clearSearchBtn) {
         clearSearchBtn.addEventListener("click", () => {
             setSearchQuery("");
             searchInput.value = "";
-            document.getElementById("searchResults").innerHTML = "";
-            render();   // instantly restore full list
+            render();   // restore full list
         });
     }
 });
