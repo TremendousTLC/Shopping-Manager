@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 18</title>
+  <title>Shopping List 19</title>
 
   <style>
 .store-title {
@@ -1476,19 +1476,53 @@ function renderNode(obj, level, color) {
   drag.style.color = levelColor;
   drag.style.fontSize = dragSize;
 
-  /* CHECKBOX — ONLY LEVEL 2 */
-  let chk = null;
-  if (level === 1) {
+/* =========================
+   CHECKBOX VISIBILITY RULES
+   ========================= */
+
+let chk = null;
+
+// LEVEL 0 → NO CHECKBOX
+if (level === 0) {
+  chk = null;
+}
+
+// LEVEL 1 → CHECKBOX EXCEPT FOR "Recipe Imports"
+else if (level === 1) {
+  if (obj.parentName !== "Recipe Imports") {
     chk = document.createElement("input");
     chk.type = "checkbox";
-    chk.className = "node-checkbox";
+    chk.className = "item-check";
     chk.checked = !!obj.checked;
+
     chk.addEventListener("change", () => {
       obj.checked = chk.checked;
       saveModel();
       render();
     });
   }
+}
+
+// LEVEL 2+ → ALWAYS SHOW CHECKBOX
+else {
+  chk = document.createElement("input");
+  chk.type = "checkbox";
+  chk.className = "item-check";
+  chk.checked = !!obj.checked;
+
+  chk.addEventListener("change", () => {
+    obj.checked = chk.checked;
+    saveModel();
+    render();
+  });
+}
+
+/* SAFE APPEND */
+if (chk instanceof Node) {
+  header.appendChild(chk);
+} else {
+  header.appendChild(document.createElement("div"));
+}
 
   /* NAME — SHOW RECIPE QTY + UNIT */
   const name = document.createElement("div");
