@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 35</title>
+  <title>Shopping List 36</title>
 
   <style>
 ul, li {
@@ -1583,25 +1583,13 @@ else {
 const chkSlot = document.createElement("div");
 chkSlot.className = "checkbox-slot";
 
-if (obj.type === "item") {
-    const chk = document.createElement("input");
-    chk.type = "checkbox";
-    chk.checked = !!obj.checked;
-    chk.className = "item-check";
-
-    chk.addEventListener("change", () => {
-        obj.checked = chk.checked;
-        saveModel();
-        render();
-    });
-
+if (chk) {
     chkSlot.appendChild(chk);
 } else {
     chkSlot.innerHTML = "&nbsp;";
 }
 
 header.appendChild(chkSlot);
-
 
   /* NAME — SHOW RECIPE QTY + UNIT */
   const name = document.createElement("div");
