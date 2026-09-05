@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 31</title>
+  <title>Shopping List 32</title>
 
   <style>
 ul, li {
@@ -309,19 +309,17 @@ body { background:var(--bg);
 
 .node-header {
    display: grid;
-   border: 1px dashed yellow !important;
    grid-template-columns:
-   	  34px                    /* chev */
-      28px                    /* drag */
-      28px                    /* checkbox */
-	  60px                    /* name column */
-      /* minmax(0, 1fr)                name column */
-      200px                    /* aisle */
-	  /* 80px                     aisle */
-      90px;                    /* actions */
-   align-items: center;
+      34px             /* chev */
+      28px             /* drag */
+      28px             /* checkbox */
+      minmax(0,200px)  /* name (wide) */
+      72px             /* aisle (narrow) */
+      90px;            /* actions */
    gap: 4px;
-   padding: 4px 0; }
+   align-items: center;
+   padding: 4px 0;
+}
 
 .collapsed .children-list {
    display:none; }
@@ -357,35 +355,40 @@ body { background:var(--bg);
     justify-content: center; }
 
 .aisle-wrapper {
-   display:flex;
-   align-items:center;
-   justify-content:flex-start;
-   margin-left:8px; }
+    width: 100% !important;        /* fills the aisle-slot */
+    max-width: 100% !important;    /* prevents shrinking */
+    flex-shrink: 0 !important;     /* keeps column stable */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;   /* select aligns left */
+    margin-left: 0 !important;     /* removes stray offset */
+}
 
 .aisle-select {
-   width: 100%;
-   max-width: 100px;
-   background: #0d1a24 !important; /* slightly lighter than panel */
-   border: 1px solid #00e6ff !important; /* neon border */
-   color: #00e6ff !important;
-   border-radius: 6px;
-   font-size: 14px;
-   height: 30px;
-   line-height: 30px;
-   box-sizing: border-box;
-   cursor: pointer;
-   text-align:center;
-   
-  /* Remove native arrow */
-   appearance: none !important;
-   -webkit-appearance: none !important;
-   -moz-appearance: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: #0d1a24 !important; /* slightly lighter than panel */
+    border: 1px solid #00e6ff !important; /* neon border */
+    color: #00e6ff !important;
+    border-radius: 6px;
+    font-size: 14px;
+    height: 30px;
+    line-height: 30px;
+    box-sizing: border-box;
+    cursor: pointer;
+    text-align: center;
 
-  /* Custom neon arrow */
-   background-image: url("data:image/svg+xml;utf8,<svg fill='%2300e6ff' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-   background-repeat: no-repeat;
-   background-position: right 6px center;
-   background-size: 16px; }
+    /* Remove native arrow */
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+
+    /* Custom neon arrow */
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%2300e6ff' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    background-size: 16px;
+}
 
 .actions-row {
    display:flex;
