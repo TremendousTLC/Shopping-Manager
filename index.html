@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 36</title>
+  <title>Shopping List 37</title>
 
   <style>
 ul, li {
@@ -1517,20 +1517,19 @@ function renderNode(obj, level, color) {
   const header = document.createElement("div");
   header.className = "node-header";
 
-/* CHEVRON */
-const chev = document.createElement("div");
-chev.className = "chev";
-const childCount = countChildrenForNode(obj, level);
+  /* CHEVRON */
+  const chev = document.createElement("div");
+  chev.className = "chev";
+  const childCount = countChildrenForNode(obj, level);
 
-if (childCount > 0) {
-  chev.innerText = obj.collapsed ? "▶" : "▼";
-  chev.style.color = levelColor;
-  chev.style.fontSize = chevSize;
-  chev.onclick = () => { obj.collapsed = !obj.collapsed; render(); };
-} else {
-  // placeholder keeps grid alignment perfect
-  chev.innerHTML = "&nbsp;";
-}
+  if (childCount > 0) {
+    chev.innerText = obj.collapsed ? "▶" : "▼";
+    chev.style.color = levelColor;
+    chev.style.fontSize = chevSize;
+    chev.onclick = () => { obj.collapsed = !obj.collapsed; render(); };
+  } else {
+    chev.innerHTML = "&nbsp;";
+  }
 
   /* DRAG HANDLE */
   const drag = document.createElement("div");
@@ -1539,59 +1538,36 @@ if (childCount > 0) {
   drag.style.color = levelColor;
   drag.style.fontSize = dragSize;
 
-/* =========================
-   CHECKBOX VISIBILITY RULES
-   ========================= */
+  /* CHECKBOX VISIBILITY RULES */
+  let chk = null;
 
-let chk = null;
-
-// LEVEL 0 → NO CHECKBOX
-if (level === 0) {
-  chk = null;
-}
-
-// LEVEL 1 → CHECKBOX EXCEPT FOR "Recipe Imports"
-else if (level === 1) {
-  if (obj.parentName !== "Recipe Imports") {
+  if (level === 0) {
+    chk = null;
+  } else if (level === 1) {
+    if (obj.parentName !== "Recipe Imports") {
+      chk = document.createElement("input");
+      chk.type = "checkbox";
+      chk.className = "item-check";
+      chk.checked = !!obj.checked;
+      chk.addEventListener("change", () => {
+        obj.checked = chk.checked;
+        saveModel();
+        render();
+      });
+    }
+  } else {
     chk = document.createElement("input");
     chk.type = "checkbox";
     chk.className = "item-check";
     chk.checked = !!obj.checked;
-
     chk.addEventListener("change", () => {
       obj.checked = chk.checked;
       saveModel();
       render();
     });
   }
-}
 
-// LEVEL 2+ → ALWAYS SHOW CHECKBOX
-else {
-  chk = document.createElement("input");
-  chk.type = "checkbox";
-  chk.className = "item-check";
-  chk.checked = !!obj.checked;
-
-  chk.addEventListener("change", () => {
-    obj.checked = chk.checked;
-    saveModel();
-    render();
-  });
-}
-
-const chkSlot = document.createElement("div");
-chkSlot.className = "checkbox-slot";
-
-if (chk) {
-    chkSlot.appendChild(chk);
-} else {
-    chkSlot.innerHTML = "&nbsp;";
-}
-
-header.appendChild(chkSlot);
-
-  /* NAME — SHOW RECIPE QTY + UNIT */
+  /* NAME */
   const name = document.createElement("div");
   name.className = "node-name";
 
@@ -1605,7 +1581,6 @@ header.appendChild(chkSlot);
     });
     input.addEventListener("blur", () => finishInlineEdit(obj, input.value));
     name.appendChild(input);
-
   } else {
     const nameText = document.createElement("span");
     nameText.className = "name-text";
@@ -1623,23 +1598,23 @@ header.appendChild(chkSlot);
 
     name.appendChild(nameText);
   }
-  
-/* CHECK ALL BUTTON — ONLY FOR RECIPE NAMES */
-if (level === 1 && obj.parentName === "Recipe Imports") {
-  const checkAllBtn = document.createElement("button");
-  checkAllBtn.className = "btn tiny";
-  checkAllBtn.innerText = "✓ All";
-  checkAllBtn.style.marginLeft = "10px";
-  checkAllBtn.style.padding = "2px 6px";
-  checkAllBtn.style.fontSize = "12px";
 
-  checkAllBtn.addEventListener("click", (e) => {
-    e.stopPropagation(); // prevent collapsing
-    checkAllInRecipe(obj);
-  });
+  /* CHECK ALL BUTTON — ONLY FOR RECIPE IMPORTS */
+  if (level === 1 && obj.parentName === "Recipe Imports") {
+    const checkAllBtn = document.createElement("button");
+    checkAllBtn.className = "btn tiny";
+    checkAllBtn.innerText = "✓ All";
+    checkAllBtn.style.marginLeft = "10px";
+    checkAllBtn.style.padding = "2px 6px";
+    checkAllBtn.style.fontSize = "12px";
 
-  name.appendChild(checkAllBtn);
-}
+    checkAllBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      checkAllInRecipe(obj);
+    });
+
+    name.appendChild(checkAllBtn);
+  }
 
   /* AISLE */
   let aisleWrapper = null;
@@ -1660,20 +1635,6 @@ if (level === 1 && obj.parentName === "Recipe Imports") {
 
     aisleWrapper.appendChild(sel);
   }
-
-/* AISLE SLOT — ALWAYS EXISTS */
-const aisleSlot = document.createElement("div");
-aisleSlot.className = "aisle-slot";
-
-/* If aisleWrapper exists, append it. Otherwise append a placeholder. */
-if (aisleWrapper instanceof Node) {
-    aisleSlot.appendChild(aisleWrapper);
-} else {
-    aisleSlot.appendChild(document.createElement("div"));
-}
-
-/* Append slot to header */
-header.appendChild(aisleSlot);
 
   /* ACTIONS */
   const actions = document.createElement("div");
@@ -1736,24 +1697,36 @@ header.appendChild(aisleSlot);
   });
   actions.appendChild(delBtn);
 
-  /* BUILD HEADER */
-  header.appendChild(chev);
-  header.appendChild(drag);
-if (level === 2 && chk instanceof Node) {
-  header.appendChild(chk);
-} else {
-  header.appendChild(document.createElement("div"));
-}
+  /* BUILD HEADER IN CORRECT GRID ORDER */
 
+  /* 1. CHECKBOX SLOT */
+  const chkSlot = document.createElement("div");
+  chkSlot.className = "checkbox-slot";
+  chkSlot.appendChild(chk || document.createElement("div"));
+  header.appendChild(chkSlot);
+
+  /* 2. AISLE SLOT */
+  const aisleSlot = document.createElement("div");
+  aisleSlot.className = "aisle-slot";
+  aisleSlot.appendChild(level >= 1 ? aisleWrapper : document.createElement("div"));
+  header.appendChild(aisleSlot);
+
+  /* 3. CHEVRON */
+  header.appendChild(chev);
+
+  /* 4. DRAG HANDLE */
+  header.appendChild(drag);
+
+  /* 5. NAME */
   header.appendChild(name);
+
+  /* 6. AISLE WRAPPER */
   header.appendChild(level >= 1 ? aisleWrapper : document.createElement("div"));
+
+  /* 7. ACTIONS */
   header.appendChild(actions);
 
   li.appendChild(header);
-
-  /* =========================
-   SAFE CHILD RENDERING BLOCK
-   ========================= */
 
   /* CHILDREN */
   const childrenList = document.createElement("ul");
@@ -1765,19 +1738,14 @@ if (level === 2 && chk instanceof Node) {
 
   if (Array.isArray(kids)) {
     kids.forEach(child => {
-
-      // SAFETY: skip null, undefined, non-objects
       if (!child || typeof child !== "object") return;
 
-      // SAFETY: assign parentName only to valid objects
       if (!child.parentName) {
         child.parentName = obj.name || null;
       }
 
-      // SAFETY: render child
       const childEl = renderNode(child, level + 1, color);
 
-      // SAFETY: ensure renderNode returned a DOM node
       if (childEl instanceof Node) {
         childrenList.appendChild(childEl);
       }
