@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 21</title>
+  <title>Shopping List 22</title>
 
   <style>
 .store-title {
@@ -455,13 +455,14 @@ body { background:var(--bg);
   /* 3. ROW GRID (WITH NAME CAP) */
   .node-header {
     display: grid !important;
-    grid-template-columns:
+	grid-template-columns:
       34px             /* chevron */
-      28px             /* checkbox */
       28px             /* drag */
+      28px             /* checkbox */
       minmax(0,200px)  /* name wraps around 200px */
       72px             /* aisle */
       auto;            /* actions */
+
     gap: 6px;
     align-items: center;
 
