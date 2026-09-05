@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 8</title>
+  <title>Shopping List 9</title>
 
   <style>
 .store-title {
@@ -1320,139 +1320,6 @@ if (showCheckedOnlyView) {
     root.appendChild(ul);
 
     if (typeof refreshAisleColumn === "function") refreshAisleColumn();
-    return;
-}
-
-/* =========================
-   SEARCH VIEW (>= 3 chars)
-   ========================= */
-if (searchQuery && searchQuery.length >= 3) {
-    const matches = collectAllMatchingNodes(store)
-      .filter(entry => entry.level !== 0);
-
-    const container = document.getElementById("searchResults");
-    container.innerHTML = "";
-
-    // Group by category first
-    const categories = {};
-    matches.forEach(entry => {
-        const cat = entry.categoryName || "Misc";
-        if (!categories[cat]) categories[cat] = [];
-        categories[cat].push(entry);
-    });
-
-    // Sort categories alphabetically
-    const sortedCats = Object.keys(categories).sort((a, b) =>
-        a.localeCompare(b)
-    );
-
-    sortedCats.forEach(catName => {
-        /* =========================
-           CATEGORY HEADER (centered)
-           ========================= */
-        const catHeader = document.createElement("div");
-        catHeader.className = "category-header";
-        catHeader.textContent = catName;
-        catHeader.style.textAlign = "center";
-        catHeader.style.fontWeight = "600";
-        catHeader.style.fontSize = "20px";
-        catHeader.style.margin = "20px 0 10px 0";
-        catHeader.style.borderBottom = "2px solid var(--muted)";
-        catHeader.style.paddingBottom = "6px";
-        container.appendChild(catHeader);
-
-        // Group items inside category by aisle
-        const aisleGroups = {};
-        categories[catName].forEach(entry => {
-            const aisle = entry.aisle || "No Aisle";
-            if (!aisleGroups[aisle]) aisleGroups[aisle] = [];
-            aisleGroups[aisle].push(entry);
-        });
-
-        // Sort aisles
-        const sortedAisles = Object.keys(aisleGroups).sort((a, b) => {
-            if (a === "No Aisle") return 1;
-            if (b === "No Aisle") return -1;
-            return a.localeCompare(b);
-        });
-
-        sortedAisles.forEach(aisle => {
-            /* =========================
-               AISLE HEADER (left aligned)
-               ========================= */
-            const aisleHeader = document.createElement("div");
-            aisleHeader.className = "aisle-header";
-            aisleHeader.textContent =
-                aisle === "No Aisle" ? "Misc Items" : `Aisle ${aisle}`;
-            aisleHeader.style.fontWeight = "500";
-            aisleHeader.style.fontSize = "16px";
-            aisleHeader.style.margin = "10px 0 4px 0";
-            aisleHeader.style.color = "var(--muted)";
-            container.appendChild(aisleHeader);
-
-            // Sort items alphabetically inside aisle
-            const items = aisleGroups[aisle].sort((a, b) =>
-                (a.node.name || "").localeCompare(b.node.name || "")
-            );
-
-            const ul = document.createElement("ul");
-            ul.className = "flat-checked-list";
-
-            items.forEach(entry => {
-                const li = document.createElement("li");
-                li.className = "flat-item";
-                li.style.display = "flex";
-                li.style.alignItems = "center";
-                li.style.justifyContent = "space-between";
-                li.style.padding = "6px 0";
-
-                // Left side: checkbox + name
-                const left = document.createElement("div");
-                left.style.display = "flex";
-                left.style.alignItems = "center";
-                left.style.gap = "10px";
-
-                const chk = document.createElement("input");
-                chk.type = "checkbox";
-                chk.className = "node-checkbox";
-                chk.checked = !!entry.node.checked;
-                chk.addEventListener("change", () => {
-                    entry.node.checked = chk.checked;
-                    saveModel();
-                });
-                left.appendChild(chk);
-
-                const nameSpan = document.createElement("span");
-                nameSpan.className = "flat-name";
-                nameSpan.textContent = entry.node.name || "(unnamed)";
-                nameSpan.style.fontSize = "15px";
-                left.appendChild(nameSpan);
-
-                li.appendChild(left);
-
-                // Right side: aisle label
-                const aisleSpan = document.createElement("span");
-                aisleSpan.className = "flat-aisle";
-                aisleSpan.textContent =
-                    entry.aisle ? `Aisle ${entry.aisle}` : "";
-                aisleSpan.style.fontSize = "14px";
-                aisleSpan.style.color = "var(--muted)";
-                aisleSpan.style.marginLeft = "20px";
-
-                li.appendChild(aisleSpan);
-
-                ul.appendChild(li);
-            });
-
-            container.appendChild(ul);
-        });
-
-        // Add spacing between categories
-        const spacer = document.createElement("div");
-        spacer.style.height = "25px";
-        container.appendChild(spacer);
-    });
-
     return;
 }
 
