@@ -622,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-022";
+const SHOP_RENDER_VERSION = "SM-001";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1094,6 +1094,8 @@ function collectAllMatchingNodes(store) {
 
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInput");
+    const clearSearchBtn = document.getElementById("clearSearchBtn");
+
     if (!searchInput) return;
 
     // SEARCH INPUT HANDLER
@@ -1106,7 +1108,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // EXIT SEARCH WHEN < 3 CHARS
         if (!searchQuery || searchQuery.length < 3) {
             document.getElementById("searchResults").innerHTML = "";
-            render();
+            render();   // restore full list
             return;
         }
 
@@ -1115,43 +1117,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // CLEAR SEARCH BUTTON HANDLER
-    const clearSearchBtn = document.getElementById("clearSearchBtn");
     if (clearSearchBtn) {
         clearSearchBtn.addEventListener("click", () => {
             setSearchQuery("");
             searchInput.value = "";
             document.getElementById("searchResults").innerHTML = "";
-            render(); // instantly restore full list
+            render();   // instantly restore full list
         });
     }
 });
-
-
-// =========================
-// Search input wiring
-// =========================
-
-document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("searchInput");
-    if (!searchInput) return;
-
-    searchInput.addEventListener("input", (e) => {
-        setSearchQuery(e.target.value);
-
-        const store = getActiveStore();
-        if (!store) return;
-
-        // If search is empty, show full store
-        if (!searchQuery) {
-            render();
-            return;
-        }
-
-        // TEMP: Just re-render the full store until we build search results
-        render();
-    });
-});
-
 
 document.getElementById("clear-aisles-btn").addEventListener("click", () => {
   if (!confirm("Clear ALL aisle assignments for this store?")) return;
