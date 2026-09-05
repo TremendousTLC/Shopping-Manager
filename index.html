@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 27</title>
+  <title>Shopping List 28</title>
 
   <style>
 ul, li {
@@ -109,6 +109,14 @@ justify-content:center; }
 .checkbox-placeholder {
     width: 28px;
     border: 1px solid blue !important;
+}
+
+.checkbox-slot {
+    width: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid blue !important; /* debug */
 }
 
 .add-subcat { color: #FF6B6B; }
@@ -303,7 +311,8 @@ body { background:var(--bg);
    display: grid;
    border: 1px dashed yellow !important;
    grid-template-columns:
-      34px                    /* chev */
+      20px                    /* checkbox-slot
+	  34px                    /* chev */
       28px                    /* drag */
       28px                    /* checkbox */
       minmax(0, 1fr)                /* name column */
@@ -1329,6 +1338,17 @@ if (showCheckedOnlyView) {
         saveModel();
         render();
       });
+	  
+/* CHECKBOX SLOT — ALWAYS EXISTS */
+const chkSlot = document.createElement("div");
+chkSlot.className = "checkbox-slot";
+
+/* Put checkbox inside the slot */
+chkSlot.appendChild(chk);
+
+/* Append slot to header */
+header.appendChild(chkSlot);
+
 
       /* NAME — with recipe qty/unit */
       const name = document.createElement("div");
