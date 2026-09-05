@@ -622,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-001";
+const SHOP_RENDER_VERSION = "SM-002";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1047,6 +1047,9 @@ function walkNodes(node, callback) {
 function collectAllMatchingNodes(store) {
   const out = [];
   if (!store || !store.categories) return out;
+  
+    // ⭐ HARD STOP: do NOT walk nodes for 1–2 chars
+  if (searchQuery && searchQuery.length < 3) return out;
 
   store.categories.forEach((cat, cidx) => {
     const color = CATEGORY_COLORS[cidx % CATEGORY_COLORS.length];
