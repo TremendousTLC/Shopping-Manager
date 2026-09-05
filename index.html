@@ -622,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-004";
+const SHOP_RENDER_VERSION = "SM-005";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1098,6 +1098,13 @@ function collectAllMatchingNodes(store) {
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInput");
     const clearSearchBtn = document.getElementById("clearSearchBtn");
+
+    // ⭐ HARD STOP: only run search if listRoot exists
+    const listRoot = document.getElementById("listRoot");
+    if (!listRoot) {
+        console.warn("Search disabled: listRoot not found on this page");
+        return;
+    }
 
     if (!searchInput) return;
 
