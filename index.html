@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 9</title>
+  <title>Shopping List 10</title>
 
   <style>
 .store-title {
@@ -1113,32 +1113,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!searchInput) return;
 
-        searchInput.addEventListener("input", (e) => {
-            setSearchQuery(e.target.value);
-
-            const store = getActiveStore();
-            if (!store) return;
-
-            if (!searchQuery || searchQuery.length < 3) {
-                render();
-                return;
-            }
-
-            render();
-        });
-
-        if (clearSearchBtn) {
-            clearSearchBtn.addEventListener("click", () => {
-                setSearchQuery("");
-                searchInput.value = "";
-                render();
-            });
-        }
     }
 
     // ⭐ Start the wait loop
     enableSearchWhenReady();
-});
+	
+/* =========================
+   FINAL SEARCH INPUT HANDLER (DROP‑IN)
+   ========================= */
+
+const searchInput = document.getElementById("searchInput");
+const clearSearchBtn = document.getElementById("clearSearchBtn");
+const rootList = document.getElementById("rootList");
+const searchResults = document.getElementById("searchResults");
+
+// Only run if rootList + searchInput exist
+if (rootList && searchInput) {
+
+    searchInput.addEventListener("input", (e) => {
+        setSearchQuery(e.target.value);
+
+        const store = getActiveStore();
+        if (!store) return;
+
+        /* =========================
+           SEARCH MODE (>= 3 chars)
+           ========================= */
+        if (searchQuery && searchQuery.length >= 3) {
+
+            // Show REAL rows
+            rootList.style.display = "";
+
+            // Hide old searchResults UI
+            if (searchResults) searchResults.style.display = "none";
+
+            render();
+            return;
+        }
+
+        /* =========================
+           NORMAL MODE (< 3 chars)
+           ========================= */
+        rootList.style.display = "";
+        if (searchResults) searchResults.style.display = "";
+
+        render();
+    });
+
+    /* =========================
+       CLEAR SEARCH BUTTON
+       ========================= */
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener("click", () => {
+            setSearchQuery("");
+            searchInput.value = "";
+
+            rootList.style.display = "";
+            if (searchResults) searchResults.style.display = "";
+
+            render();
+        });
+    }
+}
 
 document.getElementById("clear-aisles-btn").addEventListener("click", () => {
   if (!confirm("Clear ALL aisle assignments for this store?")) return;
