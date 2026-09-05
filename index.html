@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 17</title>
+  <title>Shopping List 18</title>
 
   <style>
 .store-title {
@@ -1624,7 +1624,12 @@ if (level === 1 && obj.parentName === "Recipe Imports") {
   /* BUILD HEADER */
   header.appendChild(chev);
   header.appendChild(drag);
-  header.appendChild(level === 2 ? chk : document.createElement("div"));
+if (level === 2 && chk instanceof Node) {
+  header.appendChild(chk);
+} else {
+  header.appendChild(document.createElement("div"));
+}
+
   header.appendChild(name);
   header.appendChild(level >= 1 ? aisleWrapper : document.createElement("div"));
   header.appendChild(actions);
