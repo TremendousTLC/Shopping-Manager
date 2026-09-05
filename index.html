@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 25</title>
+  <title>Shopping List 26</title>
 
   <style>
 ul, li {
@@ -79,6 +79,7 @@ input[type="file"] {
 
 .chev {
 width:34px;
+border: 2px solid red !important;
 text-align:center;
 cursor: pointer;
 user-select:none;
@@ -96,9 +97,19 @@ justify-content:center; }
     cursor: grab;
     padding:6px;
     border-radius:6px; }
+	
+.checkbox-slot {
+    width: 28px !important;
+    border: 1px solid blue !important;   /* debug */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-.checkbox-placeholder { width:28px; }
+.checkbox-placeholder {
+    width: 28px;
     border: 1px solid blue !important;
+}
 
 .add-subcat { color: #FF6B6B; }
 .add-item { color: #6BCB77; }
@@ -283,6 +294,7 @@ body { background:var(--bg);
 
 .node-header {
    display: grid;
+   border: 1px dashed yellow !important;
    grid-template-columns:
       34px                    /* chev */
       28px                    /* drag */
@@ -1526,12 +1538,17 @@ else {
   });
 }
 
-/* SAFE APPEND */
+/* CHECKBOX SLOT (ALWAYS EXISTS) */
+const chkSlot = document.createElement("div");
+chkSlot.className = "checkbox-slot";
+
 if (chk instanceof Node) {
-  header.appendChild(chk);
+    chkSlot.appendChild(chk);
 } else {
-  header.appendChild(document.createElement("div"));
+    chkSlot.innerHTML = "&nbsp;";   // keeps column alive
 }
+
+header.appendChild(chkSlot);
 
   /* NAME — SHOW RECIPE QTY + UNIT */
   const name = document.createElement("div");
