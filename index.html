@@ -622,7 +622,7 @@ body { background:var(--bg);
 
 <script>
 
-const SHOP_RENDER_VERSION = "SM-006";
+const SHOP_RENDER_VERSION = "SM-007";
 
 // Define storage key + model BEFORE loadModel()
 let dataModel = null;
@@ -1096,41 +1096,48 @@ function collectAllMatchingNodes(store) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("searchInput");
-    const clearSearchBtn = document.getElementById("clearSearchBtn");
+    function enableSearchWhenReady() {
+        const rootList = document.getElementById("rootList");
+        const searchInput = document.getElementById("searchInput");
+        const clearSearchBtn = document.getElementById("clearSearchBtn");
 
-    // ⭐ Only run search if listRoot exists AND we are on Shopping Manager page
-    const listRoot = document.getElementById("listRoot");
-    if (!listRoot) {
-        console.warn("Search disabled: listRoot not found on this page");
-        return;
-    }
-
-    if (!searchInput) return;
-
-    searchInput.addEventListener("input", (e) => {
-        setSearchQuery(e.target.value);
-
-        const store = getActiveStore();
-        if (!store) return;
-
-        // ⭐ HARD STOP: do NOT run filtered render unless >= 3 chars
-        if (!searchQuery || searchQuery.length < 3) {
-            render();   // normal full render
+        // ⭐ If rootList doesn't exist yet, try again shortly
+        if (!rootList) {
+            console.warn("Search disabled: rootList not found on this page");
+            setTimeout(enableSearchWhenReady, 100);
             return;
         }
 
-        // ⭐ Now safe to run filtered search
-        render();
-    });
+        // ⭐ Now rootList exists — safe to enable search
+        console.log("Search enabled: rootList found");
 
-    if (clearSearchBtn) {
-        clearSearchBtn.addEventListener("click", () => {
-            setSearchQuery("");
-            searchInput.value = "";
-            render();   // restore full list
+        if (!searchInput) return;
+
+        searchInput.addEventListener("input", (e) => {
+            setSearchQuery(e.target.value);
+
+            const store = getActiveStore();
+            if (!store) return;
+
+            if (!searchQuery || searchQuery.length < 3) {
+                render();
+                return;
+            }
+
+            render();
         });
+
+        if (clearSearchBtn) {
+            clearSearchBtn.addEventListener("click", () => {
+                setSearchQuery("");
+                searchInput.value = "";
+                render();
+            });
+        }
     }
+
+    // ⭐ Start the wait loop
+    enableSearchWhenReady();
 });
 
 document.getElementById("clear-aisles-btn").addEventListener("click", () => {
@@ -1482,11 +1489,11 @@ if (searchQuery && searchQuery.length >= 3) {
 }
 
 function renderFiltered(nodes) {
-    const root = document.getElementById("listRoot");
+    const root = document.getElementById("rootList");
 
     if (!root) {
-        console.error("renderFiltered: listRoot not found");
-        return;  // ⭐ prevents crash
+        console.error("renderFiltered: rootList not found");
+        return;
     }
 
     root.innerHTML = "";
@@ -1496,7 +1503,6 @@ function renderFiltered(nodes) {
         if (row) root.appendChild(row);
     });
 }
-
 
 function getChildrenForNode(obj, level) {
   if (level === 0) return obj.subcategories || [];
