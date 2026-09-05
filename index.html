@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 26</title>
+  <title>Shopping List 27</title>
 
   <style>
 ul, li {
@@ -154,6 +154,13 @@ justify-content:center; }
   border-top: 1px solid rgba(255,255,255,0.03);
   color: var(--muted);
   font-size: 13px; }
+  
+.checkbox-slot {
+  width: 28px !important;
+  border: 1px solid blue !important; /* debug */
+  display: flex;
+  align-items: center;
+  justify-content: center; }
 
 .checkbox-placeholder {
    width: 28px; }
@@ -1538,17 +1545,28 @@ else {
   });
 }
 
-/* CHECKBOX SLOT (ALWAYS EXISTS) */
 const chkSlot = document.createElement("div");
 chkSlot.className = "checkbox-slot";
 
-if (chk instanceof Node) {
+if (obj.type === "item") {
+    const chk = document.createElement("input");
+    chk.type = "checkbox";
+    chk.checked = !!obj.checked;
+    chk.className = "item-check";
+
+    chk.addEventListener("change", () => {
+        obj.checked = chk.checked;
+        saveModel();
+        render();
+    });
+
     chkSlot.appendChild(chk);
 } else {
-    chkSlot.innerHTML = "&nbsp;";   // keeps column alive
+    chkSlot.innerHTML = "&nbsp;";
 }
 
 header.appendChild(chkSlot);
+
 
   /* NAME — SHOW RECIPE QTY + UNIT */
   const name = document.createElement("div");
