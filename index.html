@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 16</title>
+  <title>Shopping List 17</title>
 
   <style>
 .store-title {
@@ -1631,6 +1631,10 @@ if (level === 1 && obj.parentName === "Recipe Imports") {
 
   li.appendChild(header);
 
+  /* =========================
+   SAFE CHILD RENDERING BLOCK
+   ========================= */
+
   /* CHILDREN */
   const childrenList = document.createElement("ul");
   childrenList.className = "children-list";
@@ -1638,9 +1642,25 @@ if (level === 1 && obj.parentName === "Recipe Imports") {
   li.appendChild(childrenList);
 
   const kids = getChildrenForNode(obj, level);
-  if (kids) {
+
+  if (Array.isArray(kids)) {
     kids.forEach(child => {
-      childrenList.appendChild(renderNode(child, level + 1, color));
+
+      // SAFETY: skip null, undefined, non-objects
+      if (!child || typeof child !== "object") return;
+
+      // SAFETY: assign parentName only to valid objects
+      if (!child.parentName) {
+        child.parentName = obj.name || null;
+      }
+
+      // SAFETY: render child
+      const childEl = renderNode(child, level + 1, color);
+
+      // SAFETY: ensure renderNode returned a DOM node
+      if (childEl instanceof Node) {
+        childrenList.appendChild(childEl);
+      }
     });
   }
 
