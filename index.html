@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 38</title>
+  <title>Shopping List 39</title>
 
   <style>
 ul, li {
@@ -79,7 +79,7 @@ input[type="file"] {
 
 .chev {
 width:34px;
-border: 2px solid red !important;
+/* border: 2px solid red !important;		*/
 text-align:center;
 cursor: pointer;
 user-select:none;
@@ -92,7 +92,7 @@ justify-content:center; }
     display: flex;
     align-items: center;
     justify-content: center;
-	border: 1px solid yellow !important;
+/*	border: 1px solid yellow !important;	*/
     height: 28px;
     cursor: grab;
     padding:6px;
@@ -100,24 +100,10 @@ justify-content:center; }
 	
 .checkbox-slot {
     width: 28px !important;
-    border: 1px solid blue !important;   /* debug */
+/*  border: 1px solid blue !important;		*/
     display: flex;
     align-items: center;
-    justify-content: center;
-}
-
-.checkbox-placeholder {
-    width: 28px;
-    border: 1px solid blue !important;
-}
-
-.checkbox-slot {
-    width: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid blue !important; /* debug */
-}
+    justify-content: center; }
 
 .add-subcat { color: #FF6B6B; }
 .add-item { color: #6BCB77; }
@@ -163,19 +149,10 @@ justify-content:center; }
   color: var(--muted);
   font-size: 13px; }
   
-.checkbox-slot {
-  width: 28px !important;
-  border: 1px solid blue !important; /* debug */
-  display: flex;
-  align-items: center;
-  justify-content: center; }
-
-.checkbox-placeholder {
-   width: 28px; }
-
 .aisle-placeholder {
-   width: 72px; }
-
+   width: 72px;
+   border: 1px solid green !important; }
+   
 .aisle-badge {
    background: linear-gradient(180deg,#0f9bd6,#0077b6);
    color: #ffffff;
