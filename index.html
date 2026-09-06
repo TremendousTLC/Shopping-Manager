@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 52</title>
+  <title>Shopping List 53</title>
 
   <style>
 ul, li {
@@ -1371,10 +1371,10 @@ function renderNode(obj, level, color) {
 
 // MUCH gentler darkening — deep levels stay readable
 let levelColor = color;
-if (level === 1) levelColor = tintColorDark(color, 0.05);
-if (level === 2) levelColor = tintColorDark(color, 0.07);
-if (level === 3) levelColor = tintColorDark(color, 0.08);
-if (level === 4) levelColor = tintColorDark(color, 0.10);
+if (level === 1) levelColor = tintColorDark(color, 0.03);
+if (level === 2) levelColor = tintColorDark(color, 0.05);
+if (level === 3) levelColor = tintColorDark(color, 0.04);
+if (level === 4) levelColor = tintColorDark(color, 0.04);
 
 // MUCH gentler font scaling — deep levels stop shrinking
 let fontSize = "20px";
