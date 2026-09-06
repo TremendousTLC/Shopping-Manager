@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 37</title>
+  <title>Shopping List 38</title>
 
   <style>
 ul, li {
@@ -1331,91 +1331,10 @@ if (showCheckedOnlyView) {
       return;
     }
 
-    flat.forEach(entry => {
-      const li = document.createElement("li");
-      li.className = "flat-item checked-row";
-
-      /* ⭐ MAKE ROW A FLEXBOX */
-      li.style.display = "flex";
-      li.style.alignItems = "center";
-      li.style.gap = "12px";
-
-      /* CHECKBOX */
-      const chk = document.createElement("input");
-      chk.type = "checkbox";
-      chk.className = "node-checkbox";
-      chk.checked = !!(entry.node.checked || entry.node.recipeChecked);
-      chk.addEventListener("change", () => {
-        entry.node.checked = chk.checked;
-        saveModel();
-        render();
-      });
-	  
-/* CHECKBOX SLOT — ALWAYS EXISTS */
-const chkSlot = document.createElement("div");
-chkSlot.className = "checkbox-slot";
-
-/* If chk exists, append it. Otherwise append a placeholder. */
-if (chk instanceof Node) {
-    chkSlot.appendChild(chk);
-} else {
-    chkSlot.appendChild(document.createElement("div"));
-}
-
-/* Append slot to header */
-header.appendChild(chkSlot);
-
-      /* NAME — with recipe qty/unit */
-      const name = document.createElement("div");
-      name.classList.add("checked-name");
-      name.style.color = entry.color || "#00e6ff";
-      name.style.maxWidth = "340px";
-      const qtyUnit =
-        entry.node.qty && entry.node.unit
-          ? ` (${entry.node.qty} ${entry.node.unit})`
-          : entry.node.qty
-            ? ` (${entry.node.qty})`
-            : "";
-
-      name.innerText = (entry.node.name || "(unnamed)") + qtyUnit;
-
-      /* ⭐ SHOPPING QTY — SAME ROW, BEFORE AISLE */
-      const qtyInput = document.createElement("input");
-      qtyInput.type = "text";
-      qtyInput.placeholder = "Qty";
-      qtyInput.value = entry.node.shopQty || "";
-      qtyInput.className = "qty-input";
-
-      qtyInput.style.background = "#2a2a2a";
-      qtyInput.style.color = "#fff";
-      qtyInput.style.border = "1px solid #555";
-      qtyInput.style.borderRadius = "6px";
-      qtyInput.style.padding = "4px 8px";
-	  qtyInput.style.width = "48px";     // ⭐ perfect for 3 digits
-	  qtyInput.style.textAlign = "center";
-
-      qtyInput.addEventListener("input", () => {
-        entry.node.shopQty = qtyInput.value;
-        saveModel();
-      });
-
-      /* AISLE BADGE — SAME ROW */
-      const aisleBadge = document.createElement("div");
-      aisleBadge.className = "aisle-badge checked-aisle";
-      aisleBadge.innerText = entry.aisle || "Aisle";
-	  aisleBadge.style.textAlign = "center";
-	  aisleBadge.style.display = "flex";
-	  aisleBadge.style.alignItems = "center";
-	  aisleBadge.style.justifyContent = "center";
-
-      /* BUILD ROW */
-      li.appendChild(chk);
-      li.appendChild(name);
-      li.appendChild(qtyInput);
-      li.appendChild(aisleBadge);
-
-      ul.appendChild(li);
-    });
+flat.forEach(entry => {
+  const nodeEl = renderNode(entry.node, entry.level || 1, entry.color || "#00e6ff");
+  ul.appendChild(nodeEl);
+});
 
     root.appendChild(ul);
 
