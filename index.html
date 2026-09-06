@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 68</title>
+  <title>Shopping List 69</title>
 
   <style>
 ul, li {
@@ -233,6 +233,8 @@ body {
   border-radius:12px;
   border:1px solid rgba(255,255,255,0.03);
   width:100%;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .panel-body {
@@ -244,8 +246,9 @@ body {
   overflow-y: visible;
 
   position:relative;
-  max-width:1400px !important;
+  max-width: 100% !important;
   margin:0 auto !important;
+  box-sizing: border-box !important;
 }
 
 .left, .right {
@@ -280,10 +283,9 @@ body {
    border: 3px solid rgba(255,255,255,0.06);
    display: block;
 
-   /* NEW: keeps node inside viewport, prevents right-edge clipping */
-   max-width: 95vw;
-   margin-left: auto;
-   margin-right: auto;
+   max-width: 100% !important;
+   width: 100% !important;
+   box-sizing: border-box !important;
 }
 
 /* 5.  NODE HEADER SYSTEM  */
@@ -552,7 +554,7 @@ body {
 .node[data-level="4"] { background: rgba(255,255,255,0.10); }
 
 /* ============================================================
-   DESKTOP DEBUG OVERLAY
+   DESKTOP DEBUG BORDER OVERLAY
    Toggle by adding: <body class="debug-layout">
    ============================================================ */
 
@@ -583,6 +585,42 @@ body.debug-layout .node {
 
 body.debug-layout .node-header {
   border: 2px solid rgba(0, 150, 255, 0.4) !important;
+}
+
+/* ============================================================
+   DESKTOP DEBUG BACKGROUNDS (toggle with body.debug-layout)
+   ============================================================ */
+
+body.debug-layout .panel-body {
+  background: rgba(0,255,255,0.12) !important;   /* cyan */
+}
+
+body.debug-layout .panel {
+  background: rgba(200,150,50,0.12) !important;  /* brown */
+}
+
+body.debug-layout #rootList {
+  background: rgba(255,255,0,0.12) !important;   /* yellow */
+}
+
+body.debug-layout #itemList {
+  background: rgba(255,0,255,0.12) !important;   /* magenta */
+}
+
+body.debug-layout .left {
+  background: rgba(0,255,0,0.12) !important;     /* green */
+}
+
+body.debug-layout .right {
+  background: rgba(255,0,0,0.12) !important;     /* red */
+}
+
+body.debug-layout .node {
+  background: rgba(255,255,255,0.12) !important; /* white */
+}
+
+body.debug-layout .node-header {
+  background: rgba(0,150,255,0.12) !important;   /* blue */
 }
 
 /* Floating legend box */
@@ -690,13 +728,24 @@ body.debug-layout .node-header {
 <div id="debug-legend">
   <b>Layout Debug Legend</b><br>
   Cyan = panel-body (main container)<br>
+  Brown = panel (background container)<br>
   Yellow = rootList (left list)<br>
   Magenta = itemList (right list)<br>
-  Green dashed = left panel<br>
-  Red dashed = right panel<br>
+  Green = left panel<br>
+  Red = right panel<br>
   White = node (row container)<br>
-  Blue = node-header (grid)
+  Blue = node-header (grid)<br>
+  <hr style="border:0;border-top:1px solid #666;margin:6px 0;">
+  Cyan BG = panel-body background<br>
+  Brown BG = panel background<br>
+  Yellow BG = rootList background<br>
+  Magenta BG = itemList background<br>
+  Green BG = left panel background<br>
+  Red BG = right panel background<br>
+  White BG = node background<br>
+  Blue BG = node-header background
 </div>
+
 
 </body>
 
