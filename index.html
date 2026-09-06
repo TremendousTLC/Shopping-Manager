@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 59</title>
+  <title>Shopping List 60</title>
 
   <style>
 ul, li {
@@ -473,20 +473,20 @@ body { background:var(--bg);
 
 @media (max-width:800px) {
 
-  /* MOBILE CONTAINER — allow full-width rows */
+  /* WRAP EACH ROW IN A SCROLL CONTAINER */
+  .node-wrapper {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    width: 100% !important;
+  }
+
+  /* NODE CAN BE WIDER THAN SCREEN */
   .node {
     list-style: none !important;
     padding: 4px 6px !important;
     margin: 0 !important;
     width: max-content !important;   /* allow overflow */
     max-width: none !important;      /* do NOT cap width */
-  }
-
-  /* SCROLL WRAPS EACH ROW, NOT THE WHOLE LIST */
-  .node-wrapper {
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    width: 100% !important;
   }
 
   /* MOBILE GRID — EXACT DESKTOP ORDER, MOBILE WIDTHS */
