@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 43</title>
+  <title>Shopping List 44</title>
 
   <style>
 ul, li {
@@ -1358,25 +1358,25 @@ function getChildrenForNode(obj, level) {
   return [];
 }
 
-function tintColor(hex, percent) {
+function tintColorDark(hex, percent) {
   const num = parseInt(hex.slice(1), 16);
   const r = (num >> 16);
   const g = (num >> 8) & 0xFF;
   const b = num & 0xFF;
 
-  const nr = Math.round(r + (255 - r) * percent);
-  const ng = Math.round(g + (255 - g) * percent);
-  const nb = Math.round(b + (255 - b) * percent);
+  const nr = Math.round(r * (1 - percent));
+  const ng = Math.round(g * (1 - percent));
+  const nb = Math.round(b * (1 - percent));
 
   return `rgb(${nr}, ${ng}, ${nb})`;
 }
 
 function renderNode(obj, level, color) {
   let levelColor = color;
-  if (level === 1) levelColor = tintColor(color, 0.25);
-  if (level === 2) levelColor = tintColor(color, 0.45);
-  if (level === 3) levelColor = tintColor(color, 0.65);
-  if (level === 4) levelColor = tintColor(color, 0.80);
+if (level === 1) levelColor = tintColorDark(color, 0.15);
+if (level === 2) levelColor = tintColorDark(color, 0.30);
+if (level === 3) levelColor = tintColorDark(color, 0.45);
+if (level === 4) levelColor = tintColorDark(color, 0.60);
 
   let fontSize = "20px";
   let chevSize = "22px";
