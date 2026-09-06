@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 48</title>
+  <title>Shopping List 49</title>
 
   <style>
 ul, li {
@@ -1370,20 +1370,23 @@ function tintColorDark(hex, percent) {
 }
 
 function renderNode(obj, level, color) {
-  let levelColor = color;
-if (level === 1) levelColor = tintColorDark(color, 0.15);
-if (level === 2) levelColor = tintColorDark(color, 0.30);
-if (level === 3) levelColor = tintColorDark(color, 0.45);
-if (level === 4) levelColor = tintColorDark(color, 0.60);
 
-  let fontSize = "20px";
-  let chevSize = "22px";
-  let dragSize = "20px";
+// MUCH gentler darkening — deep levels stay readable
+let levelColor = color;
+if (level === 1) levelColor = tintColorDark(color, 0.10);
+if (level === 2) levelColor = tintColorDark(color, 0.18);
+if (level === 3) levelColor = tintColorDark(color, 0.22);
+if (level === 4) levelColor = tintColorDark(color, 0.25);
 
-  if (level === 1) { fontSize = "18px"; chevSize = "20px"; dragSize = "18px"; }
-  if (level === 2) { fontSize = "16px"; chevSize = "18px"; dragSize = "16px"; }
-  if (level === 3) { fontSize = "15px"; chevSize = "16px"; dragSize = "15px"; }
-  if (level === 4) { fontSize = "14px"; chevSize = "14px"; dragSize = "14px"; }
+// MUCH gentler font scaling — deep levels stop shrinking
+let fontSize = "20px";
+let chevSize = "22px";
+let dragSize = "20px";
+
+if (level === 1) { fontSize = "19px"; chevSize = "21px"; dragSize = "19px"; }
+if (level === 2) { fontSize = "18px"; chevSize = "20px"; dragSize = "18px"; }
+if (level === 3) { fontSize = "18px"; chevSize = "19px"; dragSize = "18px"; }
+if (level === 4) { fontSize = "18px"; chevSize = "18px"; dragSize = "18px"; }
 
   const li = document.createElement("li");
   li.className = "node";
