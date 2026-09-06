@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 67</title>
+  <title>Shopping List 68</title>
 
   <style>
 ul, li {
@@ -316,7 +316,7 @@ body {
          4px
         34px
         28px
-        minmax(0, 1fr)
+        minmax(120px, 1fr)   /* NAME HAS A MAX */
         50px
         70px;
 
@@ -327,9 +327,7 @@ body {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box !important;
-
-    /* KEY FIX: allow shrinking instead of overflowing */
-    min-width: 0 !important;
+    min-width: 0 !important;   /* CRITICAL */
 }
 
 .collapsed .children-list {
