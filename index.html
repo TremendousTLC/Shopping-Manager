@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 62</title>
+  <title>Shopping List 63</title>
 
   <style>
 ul, li {
@@ -196,49 +196,68 @@ justify-content:center; }
 /* 1: ROOT & BODY */
 #rootList {
   flex: 1 1 auto;
-  overflow: visible;
-  padding-bottom: 12px; }
+  overflow-x: auto !important;   /* allow horizontal scroll */
+  padding-bottom: 12px;
+  max-width: 1400px !important;
+}
+
+#itemList {
+  max-width: 1400px !important;
+}
 
 :root {
-   --bg:#0b0b0d;
-   --panel:#0f1720;
-   --muted:#9aa6b2;
-   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
-    
-body { background:var(--bg);
-   color:#e6eef3;
-   margin:0;
-   padding:12px; }
+  --bg:#0b0b0d;
+  --panel:#0f1720;
+  --muted:#9aa6b2;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
 
+body {
+  background:var(--bg);
+  color:#e6eef3;
+  margin:0;
+  padding:12px;
+}
+
+/* REMOVE WIDTH CAP */
 .app-wrap {
-   max-width:1100px;
-   margin:0 auto; }
+  max-width:none !important;
+  width:100%;
+}
 
-
-/* 2. PANEL LAYOUT  */   
+/* 2. PANEL LAYOUT */
 .panel {
-   background:linear-gradient(180deg,#071018,#071018);
-   padding:12px;
-   border-radius:12px;
-   border:1px solid rgba(255,255,255,0.03);
-   width:100%; }
+  background:linear-gradient(180deg,#071018,#071018);
+  padding:12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.03);
+  width:100%;
+}
 
 .panel-body {
-   display: flex;
-   flex-direction: column;
-   gap: 12px;
-   overflow-x: hidden;
-   overflow-y: visible;
-   position: relative; }
+  display:flex;
+  flex-direction:column;
+  gap:12px;
 
+  /* ALLOW WIDTH EXPANSION */
+  overflow-x: visible !important;
+  overflow-y: visible;
 
+  position:relative;
+  max-width:1400px !important;
+  margin:0 auto !important;
+}
+
+.left, .right {
+  max-width:1400px !important;
+}
+                      
 /* 3. TOOLBAR  */
 .toolbar {
    display:flex;
    gap:8px;
    flex-direction:column;
    margin-bottom:12px; }
-
 
 /* 4. LIST STRUCTURE
 .root-list {
