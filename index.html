@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 42</title>
+  <title>Shopping List 43</title>
 
   <style>
 ul, li {
@@ -533,6 +533,12 @@ body { background:var(--bg);
   }
 }
 
+.node[data-level="0"] { background: rgba(255,255,255,0.03); }
+.node[data-level="1"] { background: rgba(255,255,255,0.06); }
+.node[data-level="2"] { background: rgba(255,255,255,0.09); }
+.node[data-level="3"] { background: rgba(255,255,255,0.12); }
+.node[data-level="4"] { background: rgba(255,255,255,0.15); }
+
   </style>
 
  </head>
@@ -619,30 +625,6 @@ body { background:var(--bg);
 
   </div>
 
-  <!--
-    NOTE FOR YOU:
-
-    Your JS will generate rows inside #rootList and #itemList.
-    Each row should include SVG icons like this:
-
-    <button class="action-icon edit">
-      <svg viewBox="0 0 24 24">
-        <path d="..." />
-      </svg>
-    </button>
-
-    <button class="action-icon delete">
-      <svg viewBox="0 0 24 24">
-        <path d="..." />
-      </svg>
-    </button>
-
-    <button class="action-icon add">
-      <svg viewBox="0 0 24 24">
-        <path d="..." />
-      </svg>
-    </button>
-  -->
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
