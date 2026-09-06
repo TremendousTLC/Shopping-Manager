@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 57</title>
+  <title>Shopping List 58</title>
 
   <style>
 ul, li {
@@ -473,56 +473,58 @@ body { background:var(--bg);
 
 @media (max-width:800px) {
 
-  /* NODE CONTAINER — remove left margin/padding */
+  /* NODE CONTAINER — allow horizontal scroll */
   .node {
     list-style: none !important;
     padding: 4px 6px !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    max-width: 95vw !important;
+    max-width: none !important;     /* allow full width */
+    width: max-content !important;  /* allow overflow */
   }
 
+  /* ROOT LIST MUST SCROLL */
   #rootList {
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch;
+    width: 100% !important;
   }
 
-  /* MOBILE GRID — EXACT DESKTOP COLUMN ORDER, MOBILE WIDTHS */
+  /* MOBILE GRID — EXACT DESKTOP COLUMN ORDER */
   .node-header {
     display: grid !important;
 
     grid-template-columns:
-      24px              /* checkbox */
+      28px              /* checkbox */
       14px              /* aisle-slot */
-      28px              /* chevron */
-      24px              /* drag */
-      minmax(0, 1fr)    /* NAME GETS ALL REMAINING SPACE */
-      50px              /* aisle-wrapper */
+      34px              /* chevron */
+      28px              /* drag */
+      minmax(200px, 1fr)/* NAME CAN GROW AGAIN */
+      60px              /* aisle-wrapper */
       70px;             /* actions */
 
-    gap: 4px !important;
+    gap: 6px !important;
     align-items: center;
 
+    width: max-content !important;  /* ALLOW OVERFLOW */
+    min-width: 100% !important;     /* at least screen width */
+    overflow: visible !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
-
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: hidden !important;
   }
 
-  /* NAME WRAPS CLEANLY */
+  /* NAME WRAPS + EXPANDS */
   .node-name,
   .checked-name {
     white-space: normal !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
   }
 
   /* AISLE FIXED + ALIGNED */
   .aisle-wrapper,
   .checked-aisle {
-    width: 50px !important;
+    width: 60px !important;
     flex-shrink: 0 !important;
     text-align: right !important;
   }
