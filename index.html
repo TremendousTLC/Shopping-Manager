@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 69</title>
+  <title>Shopping List 70</title>
 
   <style>
 ul, li {
@@ -241,7 +241,7 @@ body {
   display:flex;
   flex-direction:column;
   gap:12px;
-
+  padding: 12px !important;   /* exposes cyan background */
   overflow-x: visible !important;
   overflow-y: visible;
 
@@ -249,11 +249,12 @@ body {
   max-width: 100% !important;
   margin:0 auto !important;
   box-sizing: border-box !important;
+  background: var(--panel); /* your normal background */
 }
 
 .left, .right {
   flex: 1 1 auto !important;      /* participate in flex sizing */
-  width: 100% !important;          /* match parent width */
+  width: auto !important;          /* match parent width */
   max-width: 100% !important;      /* do NOT exceed parent */
   box-sizing: border-box !important;
 }
