@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 56</title>
+  <title>Shopping List 57</title>
 
   <style>
 ul, li {
@@ -471,75 +471,60 @@ body { background:var(--bg);
     white-space: nowrap;
 }
 
-
 @media (max-width:800px) {
 
-  /* 1. KILL BULLETS */
+  /* NODE CONTAINER — remove left margin/padding */
   .node {
     list-style: none !important;
+    padding: 4px 6px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    max-width: 95vw !important;
   }
 
-  /* 2. SCROLL CONTAINER */
   #rootList {
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* 3. ROW GRID (WITH NAME CAP) */
+  /* MOBILE GRID — EXACT DESKTOP COLUMN ORDER, MOBILE WIDTHS */
   .node-header {
     display: grid !important;
-    grid-template-columns:
-      28px              /* checkbox */
-      14px              /* aisle-slot (mobile-safe) */
-      34px              /* chevron */
-      28px              /* drag */
-      minmax(500, 1fr)    /* name (flexible, wraps) */
-      60px              /* aisle-wrapper (tight mobile width) */
-      70px;             /* actions (fits your icons) */
 
-    gap: 6px;
+    grid-template-columns:
+      24px              /* checkbox */
+      14px              /* aisle-slot */
+      28px              /* chevron */
+      24px              /* drag */
+      minmax(0, 1fr)    /* NAME GETS ALL REMAINING SPACE */
+      50px              /* aisle-wrapper */
+      70px;             /* actions */
+
+    gap: 4px !important;
     align-items: center;
 
-    width: max-content !important;
-	max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
     overflow: hidden !important;
   }
 
-  /* 4. CHEVRON TIGHT LEFT */
-  .chev {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  /* 5. NAME WRAPS */
-  .node-name {
+  /* NAME WRAPS CLEANLY */
+  .node-name,
+  .checked-name {
     white-space: normal !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
   }
 
-  /* 6. AISLE FIXED */
-  .aisle-wrapper {
-    width: 60px !important;
-    flex-shrink: 0 !important;
-	text-align: right;
-  }
-}
-
-@media (max-width:800px) {
-
-  /* NAME WRAPS CLEANLY */
-  .checked-name {
-    white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: unset !important;
-  }
-
   /* AISLE FIXED + ALIGNED */
+  .aisle-wrapper,
   .checked-aisle {
-    width: 60px !important;
+    width: 50px !important;
     flex-shrink: 0 !important;
-    text-align: right;
+    text-align: right !important;
   }
 }
 
