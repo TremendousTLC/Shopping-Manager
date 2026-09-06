@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 65</title>
+  <title>Shopping List 66</title>
 
   <style>
 ul, li {
@@ -150,7 +150,7 @@ justify-content:center; }
   font-size: 13px; }
   
 .aisle-placeholder {
-   width: 2px; }
+   width: 4px; }
    
 .aisle-badge {
    background: linear-gradient(180deg,#0f9bd6,#0077b6);
@@ -312,13 +312,13 @@ body {
 .node-header {
     display: grid;
     grid-template-columns:
-        28px              /* checkbox-slot */
-        10px              /* aisle-slot */
-        34px              /* chevron */
-        28px              /* drag-handle */
-        minmax(0, 1fr)    /* name can shrink */
-        72px              /* aisle-wrapper */
-        90px;             /* actions */
+        28px
+         4px
+        34px
+        28px
+        minmax(0, 1fr)
+        50px
+        70px;
 
     align-items: center;
     gap: 4px;
@@ -326,9 +326,11 @@ body {
 
     width: 100%;
     max-width: 100%;
-    overflow: hidden;     /* prevents clipping scrollbars */
-}
+    box-sizing: border-box !important;
 
+    /* KEY FIX: allow shrinking instead of overflowing */
+    min-width: 0 !important;
+}
 
 .collapsed .children-list {
    display:none; }
@@ -494,13 +496,6 @@ body {
 }
 
 @media (max-width:800px) {
-
-  /* WRAP EACH ROW IN A SCROLL CONTAINER */
-  .node-wrapper {
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch;
-    width: 100% !important;
-  }
 
   /* NODE CAN BE WIDER THAN SCREEN */
   .node {
@@ -1470,17 +1465,12 @@ if (level === 2) { fontSize = "18px"; chevSize = "20px"; dragSize = "18px"; }
 if (level === 3) { fontSize = "18px"; chevSize = "19px"; dragSize = "18px"; }
 if (level === 4) { fontSize = "18px"; chevSize = "18px"; dragSize = "18px"; }
 
-/* WRAPPER FOR MOBILE SCROLL */
-const wrapper = document.createElement("div");
-wrapper.className = "node-wrapper";
-
 /* ORIGINAL NODE */
 const li = document.createElement("li");
 li.className = "node";
 li.dataset.id = obj.id;
 li.dataset.level = level;
 if (obj.collapsed) li.classList.add("collapsed");
-
 
   const header = document.createElement("div");
   header.className = "node-header";
