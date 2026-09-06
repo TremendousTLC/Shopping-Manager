@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 53</title>
+  <title>Shopping List 54</title>
 
   <style>
 ul, li {
@@ -251,12 +251,18 @@ body { background:var(--bg);
    gap:8px; }
 
 .node {
-   background:linear-gradient(180deg,#071018,#0b1116);
-   border-radius:10px;
+   background: linear-gradient(180deg,#071018,#0b1116);
+   border-radius: 10px;
    margin-bottom: 4px;
-   padding:8px;
-   border:3px solid rgba(255,255,255,0.06);
-   display:block; }
+   padding: 8px;
+   border: 3px solid rgba(255,255,255,0.06);
+   display: block;
+
+   /* NEW: keeps node inside viewport, prevents right-edge clipping */
+   max-width: 95vw;
+   margin-left: auto;
+   margin-right: auto;
+}
 
 /* 5.  NODE HEADER SYSTEM  */
 .node-name {
@@ -284,18 +290,23 @@ body { background:var(--bg);
 .node-header {
     display: grid;
     grid-template-columns:
-        28px              /* 1. checkbox-slot */
-        10px              /* 2. aisle-slot */
-        34px              /* 3. chevron */
-        28px              /* 4. drag-handle */
-        minmax(200px, 1fr)/* 5. name (flex column) */
-        72px              /* 6. aisle-wrapper */
-        90px;             /* 7. actions */
+        28px              /* checkbox-slot */
+        10px              /* aisle-slot */
+        34px              /* chevron */
+        28px              /* drag-handle */
+        minmax(0, 1fr)    /* name can shrink */
+        72px              /* aisle-wrapper */
+        90px;             /* actions */
 
     align-items: center;
     gap: 4px;
     padding: 4px 0;
+
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;     /* prevents clipping scrollbars */
 }
+
 
 .collapsed .children-list {
    display:none; }
@@ -477,19 +488,21 @@ body { background:var(--bg);
   /* 3. ROW GRID (WITH NAME CAP) */
   .node-header {
     display: grid !important;
-	grid-template-columns:
-      34px             /* chevron */
-      28px             /* drag */
-      28px             /* checkbox */
-      minmax(0,200px)  /* name wraps around 200px */
-      72px             /* aisle */
-      auto;            /* actions */
+    grid-template-columns:
+      28px              /* checkbox */
+      14px              /* aisle-slot (mobile-safe) */
+      34px              /* chevron */
+      28px              /* drag */
+      minmax(0, 1fr)    /* name (flexible, wraps) */
+      60px              /* aisle-wrapper (tight mobile width) */
+      70px;             /* actions (fits your icons) */
 
     gap: 6px;
     align-items: center;
 
-    width: max-content !important;  /* row wider than screen */
-    min-width: 100%;                /* at least screen width */
+    width: 100% !important;
+	max-width: 100% !important;
+    overflow: hidden !important;
   }
 
   /* 4. CHEVRON TIGHT LEFT */
@@ -501,14 +514,15 @@ body { background:var(--bg);
   /* 5. NAME WRAPS */
   .node-name {
     white-space: normal !important;
-    overflow: visible !important;
-    text-overflow: unset !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   /* 6. AISLE FIXED */
   .aisle-wrapper {
-    width: 72px !important;
+    width: 60px !important;
     flex-shrink: 0 !important;
+	text-align: right;
   }
 }
 
