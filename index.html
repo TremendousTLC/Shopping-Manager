@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 78</title>
+  <title>Shopping List 79</title>
 
   <style>
 ul, li {
@@ -582,6 +582,19 @@ body {
    ============================================================ */
 
 @media (max-width:800px) {
+  .aisle-column {
+    min-width: 90px;
+  }
+
+  .item-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .item-row > * {
+    width: 100%;
+  }
 
   .node {
     list-style: none !important;
@@ -626,6 +639,13 @@ body {
     flex-shrink: 0 !important;
     text-align: right !important;
   }
+}
+
+.mobile-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 /* ============================================================
@@ -1822,11 +1842,15 @@ if (obj.collapsed) li.classList.add("collapsed");
   /* 5. NAME */
   header.appendChild(name);
 
-  /* 6. AISLE WRAPPER */
-  header.appendChild(level >= 1 ? aisleWrapper : document.createElement("div"));
+/* 6 + 7. MOBILE SAFE WRAPPER */
+const mobileRow = document.createElement("div");
+mobileRow.className = "mobile-row";
 
-  /* 7. ACTIONS */
-  header.appendChild(actions);
+if (level >= 1) mobileRow.appendChild(aisleWrapper);
+mobileRow.appendChild(actions);
+
+header.appendChild(mobileRow);
+
 
   li.appendChild(header);
 
