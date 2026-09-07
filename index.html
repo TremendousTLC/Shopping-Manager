@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 71</title>
+  <title>Shopping List 72</title>
 
   <style>
 ul, li {
@@ -179,6 +179,7 @@ justify-content:center; }
   padding: 0;
   border: none;
   background: none;
+  padding-right: 6px !important;
 }
 
 .children-list {
@@ -280,15 +281,29 @@ body {
    flex-direction:column;
    margin-bottom:12px; }
 
-/* 4. LIST STRUCTURE
+/* ============================================================
+   4. LIST STRUCTURE — ROOT, NODES, CHILDREN
+   ============================================================ */
+
 .root-list {
-   list-style:none;
-   padding:0;
+   list-style: none;
+   padding: 0;
    padding-left: 0 !important;
    margin-left: 0 !important;
-   display:flex;
-   flex-direction:column;
-   gap:8px; }
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+}
+
+.children-list {
+   max-width: 1080px;
+   min-width: 0;
+   padding-left: 0 !important;
+   margin-left: 0 !important;
+   display: flex;
+   flex-direction: column;
+   gap: 4px;
+}
 
 .node {
    background: linear-gradient(180deg,#071018,#0b1116);
@@ -297,69 +312,22 @@ body {
    padding: 8px;
    border: 3px solid rgba(255,255,255,0.06);
    display: block;
-
    max-width: 100% !important;
    width: 100% !important;
    box-sizing: border-box !important;
 }
 
-/* 5.  NODE HEADER SYSTEM  */
-.node-name {
-   flex: 1;
-   min-width: 0;
-   max-width: 600px;
-/* border: 1px solid red !important;		*/
-   display: flex;
-   align-items: center;
-   gap: 8px;
-   white-space: normal !important;
-   overflow: visible !important;
-   text-overflow: unset !important; }
-
-.node-actions {
-   display: flex;
-   justify-content: flex-end !important;
-   gap: 6px;
-   width: 80px !important;
-   min-width: 0 !important;
-   flex: none !important;
-   flex-wrap: nowrap !important;
-   overflow: visible !important; }
-
-.node-header {
-    display: grid;
-    grid-template-columns:
-        28px
-         4px
-        34px
-        28px
-        minmax(120px, 1fr)   /* NAME HAS A MAX */
-        50px
-        70px;
-
-    align-items: center;
-    gap: 4px;
-    padding: 4px 0;
-
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box !important;
-    min-width: 0 !important;   /* CRITICAL */
+.collapsed .children-list {
+   display: none;
 }
 
-.collapsed .children-list {
-   display:none; }
-
-.node-checkbox {
-   margin-right:6px;
-   transform:translateY(1px); }
-
 .match-meta {
-   font-size:12px;
-   color:var(--muted);
-   display:flex;
-   gap:8px;
-   align-items:center; }
+   font-size: 12px;
+   color: var(--muted);
+   display: flex;
+   gap: 8px;
+   align-items: center;
+}
 
 .inline-edit {
   background: rgba(255,255,255,0.03);
@@ -372,29 +340,84 @@ body {
   width: 100%;
   box-sizing: border-box;
   overflow-x: auto;
-  white-space: nowrap; }
+  white-space: nowrap;
+}
+
+/* ============================================================
+   5. NODE HEADER SYSTEM — CATEGORY HEADERS
+   ============================================================ */
+
+.node-header {
+    display: grid;
+    grid-template-columns:
+        28px              /* checkbox */
+         4px              /* spacer */
+        34px              /* chevron */
+        28px              /* drag */
+        minmax(160px, 1fr)/* NAME */
+        72px              /* AISLE */
+        80px;             /* ACTIONS */
+
+    align-items: center;
+    gap: 4px;
+    padding: 4px 0;
+
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+}
+
+.node-name {
+   flex: 1;
+   min-width: 0 !important;
+   max-width: 600px;
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   white-space: normal !important;
+   overflow: visible !important;
+   text-overflow: unset !important;
+}
+
+.node-actions {
+   display: flex;
+   justify-content: flex-end !important;
+   gap: 6px;
+   width: 80px !important;
+   min-width: 0 !important;
+   flex: none !important;
+   flex-wrap: nowrap !important;
+   overflow: visible !important;
+}
+
+.node-checkbox {
+   margin-right: 6px;
+   transform: translateY(1px);
+}
 
 .aisle-slot {
-    width: 10px !important;   /* match your grid-template-columns */
+    width: 10px !important;
     display: flex;
     align-items: center;
-    justify-content: center; }
+    justify-content: center;
+}
 
 .aisle-wrapper {
-    width: 100% !important;        /* fills the aisle-slot */
-    max-width: 100% !important;    /* prevents shrinking */
-    flex-shrink: 0 !important;     /* keeps column stable */
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-shrink: 0 !important;
     display: flex;
     align-items: center;
-    justify-content: flex-start;   /* select aligns left */
-    margin-left: 0 !important;     /* removes stray offset */
+    justify-content: flex-start;
+    margin-left: 0 !important;
 }
 
 .aisle-select {
     width: 100% !important;
     max-width: 100% !important;
-    background: #0d1a24 !important; /* slightly lighter than panel */
-    border: 1px solid #00e6ff !important; /* neon border */
+    background: #0d1a24 !important;
+    border: 1px solid #00e6ff !important;
     color: #00e6ff !important;
     border-radius: 6px;
     font-size: 14px;
@@ -404,29 +427,134 @@ body {
     cursor: pointer;
     text-align: center;
 
-    /* Remove native arrow */
     appearance: none !important;
     -webkit-appearance: none !important;
     -moz-appearance: none !important;
 
-    /* Custom neon arrow */
     background-image: url("data:image/svg+xml;utf8,<svg fill='%2300e6ff' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
     background-repeat: no-repeat;
     background-position: right 6px center;
     background-size: 16px;
 }
 
+/* lock aisle width for header + items */
+.aisle-wrapper,
+.aisle-select {
+   width: 72px !important;
+   max-width: 72px !important;
+   flex-shrink: 0 !important;
+}
+
+/* ============================================================
+   6. ITEM ROW SYSTEM — FLAT ITEMS & CHECKED ITEMS
+   ============================================================ */
+
+/* FLAT ITEM ROW (UNCHECKED ITEMS) */
+.flat-item {
+    display: grid !important;
+    grid-template-columns:
+        28px
+         4px
+        34px
+        28px
+        minmax(160px, 1fr)
+        72px
+        80px;
+
+    align-items: center;
+    gap: 4px;
+    padding: 4px 0;
+
+    width: 100%;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+}
+
+/* CHECKED ROW (CHECKMARKED ITEMS) */
+.checked-row {
+    display: grid !important;
+    grid-template-columns:
+        28px
+         4px
+        34px
+        28px
+        minmax(160px, 1fr)
+        72px
+        80px;
+
+    align-items: center;
+    gap: 4px;
+    padding: 4px 0;
+
+    width: 100%;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+}
+
+.flat-checked-list {
+   list-style: none;
+   padding: 0;
+   margin: 0;
+   display: flex;
+   flex-direction: column;
+   gap: 6px;
+}
+
+.checked-name {
+   white-space: nowrap;
+   min-width: 0;
+}
+
+.checked-row .checked-name {
+    flex: 1;
+    min-width: 0 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+}
+
+.checked-aisle {
+   margin-left: 0;
+   padding-left: 0;
+}
+
+.checked-row .aisle-badge,
+.flat-item .aisle-badge {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    width: 72px !important;
+}
+
+.checked-row .qty-input,
+.flat-item .qty-input {
+    background: #2a2a2a;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* ============================================================
+   TOOLBAR / ROW GROUPS (outside 4 & 5 but related)
+   ============================================================ */
+
 .actions-row {
-   display:flex;
-   flex-wrap:wrap;
-   width:100%;
-   gap:8px;
-   align-items:center; }
+   display: flex;
+   flex-wrap: wrap;
+   width: 100%;
+   gap: 8px;
+   align-items: center;
+}
 
 .row-0 {
    justify-content: flex-start;
-   gap: 8px; }
-   
+   gap: 8px;
+}
+
 .toolbar-row,
 .toolbar-search-row {
   display: flex;
@@ -443,109 +571,42 @@ body {
   white-space: nowrap;
 }
 
-.aisle-wrapper,
-.aisle-select {
-   width: 72px !important;
-   max-width: 72px !important;
-   flex-shrink: 0 !important; }
-
-.name-kind {
-   font-weight: 600;
-   color: var(--kind-color, #fff); }
-
-.name-subkind {
-   font-style: italic;
-   opacity: 0.85; }
-
-.flat-checked-list {
-   list-style:none;
-   padding:0;
-   margin:0;
-   display:flex;
-   flex-direction:column;
-   gap:6px; }
-
-.checked-name {
-   white-space: nowrap;
-   min-width: 0; }
-
-.checked-aisle {
-   margin-left: 0;
-   padding-left: 0; }
-   
-.checked-row {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 12px !important;
-    width: 100%;
-}
-
-.flat-item.checked-row {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 12px !important;
-    width: 100%;
-}
-
-.checked-row .aisle-badge {
-    display: inline-flex !important;
-    align-items: center;
-    white-space: nowrap;
-}
-
-.checked-row .checked-name {
-    flex: 1;
-    min-width: 0;
-}
-
-.checked-row .qty-input {
-    background: #2a2a2a;
-    color: #fff;
-    border: 1px solid #555;
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 14px;
-    white-space: nowrap;
-}
+/* ============================================================
+   MOBILE ADAPTATION
+   ============================================================ */
 
 @media (max-width:800px) {
 
-  /* NODE CAN BE WIDER THAN SCREEN */
   .node {
     list-style: none !important;
     padding: 4px 6px !important;
     margin: 0 !important;
-    width: max-content !important;   /* allow overflow */
-    max-width: none !important;      /* do NOT cap width */
+    width: max-content !important;
+    max-width: none !important;
   }
 
-  /* MOBILE GRID — EXACT DESKTOP ORDER, MOBILE WIDTHS */
   .node-header {
     display: grid !important;
-
     grid-template-columns:
-      28px              /* checkbox */
-      14px              /* aisle-slot */
-      34px              /* chevron */
-      28px              /* drag */
-      minmax(180px, 1fr)/* NAME CAN GROW AGAIN */
-      40px              /* aisle-wrapper */
-      80px;             /* actions */
+      28px
+      14px
+      34px
+      28px
+      minmax(180px, 1fr)
+      40px
+      80px;
 
     gap: 6px !important;
     align-items: center;
 
-    width: max-content !important;   /* allow overflow */
-    min-width: 100% !important;      /* at least screen width */
+    width: max-content !important;
+    min-width: 100% !important;
     overflow: visible !important;
 
     padding-left: 0 !important;
     padding-right: 0 !important;
   }
 
-  /* NAME WRAPS + EXPANDS */
   .node-name,
   .checked-name {
     white-space: normal !important;
@@ -553,7 +614,6 @@ body {
     text-overflow: unset !important;
   }
 
-  /* AISLE FIXED + ALIGNED */
   .aisle-wrapper,
   .checked-aisle {
     width: 40px !important;
@@ -561,6 +621,10 @@ body {
     text-align: right !important;
   }
 }
+
+/* ============================================================
+   NODE LEVEL SHADING
+   ============================================================ */
 
 .node[data-level="0"] { background: rgba(255,255,255,0.02); }
 .node[data-level="1"] { background: rgba(255,255,255,0.04); }
@@ -570,7 +634,6 @@ body {
 
 /* ============================================================
    DESKTOP DEBUG BORDER OVERLAY
-   Toggle by adding: <body class="debug-layout">
    ============================================================ */
 
 body.debug-layout .panel-body {
@@ -603,39 +666,39 @@ body.debug-layout .node-header {
 }
 
 /* ============================================================
-   DESKTOP DEBUG BACKGROUNDS (toggle with body.debug-layout)
+   DESKTOP DEBUG BACKGROUNDS
    ============================================================ */
 
 body.debug-layout .panel-body {
-  background: rgba(0,255,255,0.12) !important;   /* cyan */
+  background: rgba(0,255,255,0.12) !important;
 }
 
 body.debug-layout .panel {
-  background: rgba(200,150,50,0.12) !important;  /* brown */
+  background: rgba(200,150,50,0.12) !important;
 }
 
 body.debug-layout #rootList {
-  background: rgba(255,255,0,0.12) !important;   /* yellow */
+  background: rgba(255,255,0,0.12) !important;
 }
 
 body.debug-layout #itemList {
-  background: rgba(255,0,255,0.12) !important;   /* magenta */
+  background: rgba(255,0,255,0.12) !important;
 }
 
 body.debug-layout .left {
-  background: rgba(0,255,0,0.12) !important;     /* green */
+  background: rgba(0,255,0,0.12) !important;
 }
 
 body.debug-layout .right {
-  background: rgba(255,0,0,0.12) !important;     /* red */
+  background: rgba(255,0,0,0.12) !important;
 }
 
 body.debug-layout .node {
-  background: rgba(255,255,255,0.12) !important; /* white */
+  background: rgba(255,255,255,0.12) !important;
 }
 
 body.debug-layout .node-header {
-  background: rgba(0,150,255,0.12) !important;   /* blue */
+  background: rgba(0,150,255,0.12) !important;
 }
 
 /* Floating legend box */
@@ -652,6 +715,16 @@ body.debug-layout .node-header {
   z-index: 99999;
   pointer-events: none;
   font-family: Consolas, monospace;
+}
+
+body.debug-layout .node-header {
+    background: rgba(0,150,255,0.12) !important;
+    border: 2px solid rgba(0,150,255,0.4) !important;
+}
+
+body.debug-layout .node-name {
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px dashed rgba(255,255,255,0.2) !important;
 }
 
   </style>
