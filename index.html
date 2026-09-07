@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 73</title>
+  <title>Shopping List 74</title>
 
   <style>
 ul, li {
@@ -355,8 +355,8 @@ body {
         34px
         28px
         minmax(160px, 1fr)
-        minmax(72px, auto)   /* FIXED */
-        80px;
+        96px                 /* AISLE widened & locked */
+        80px;                /* ACTIONS */
 
     align-items: center;
     gap: 4px;
@@ -366,7 +366,6 @@ body {
     box-sizing: border-box !important;
     min-width: 0 !important;
 }
-
 
 .node-name {
    flex: 1;
@@ -440,8 +439,8 @@ body {
 /* lock aisle width for header + items */
 .aisle-wrapper,
 .aisle-select {
-   width: 72px !important;
-   max-width: 72px !important;
+   width: 96px !important;      /* match grid aisle width */
+   max-width: 96px !important;
    flex-shrink: 0 !important;
 }
 
@@ -449,6 +448,7 @@ body {
    6. ITEM ROW SYSTEM — FLAT ITEMS & CHECKED ITEMS
    ============================================================ */
 
+/* FLAT ITEM ROW (UNCHECKED ITEMS) */
 .flat-item {
     display: grid !important;
     grid-template-columns:
@@ -457,8 +457,8 @@ body {
         34px
         28px
         minmax(160px, 1fr)
-        minmax(72px, auto)   /* FIXED */
-        80px;
+        96px                 /* AISLE widened & locked */
+        80px;                /* ACTIONS */
 
     align-items: center;
     gap: 4px;
@@ -467,7 +467,6 @@ body {
     box-sizing: border-box !important;
     min-width: 0 !important;
 }
-
 
 /* CHECKED ROW (CHECKMARKED ITEMS) */
 .checked-row {
@@ -478,8 +477,8 @@ body {
         34px
         28px
         minmax(160px, 1fr)
-        minmax(72px, auto)   /* FIXED */
-        80px;
+        96px                 /* AISLE widened & locked */
+        80px;                /* ACTIONS */
 
     align-items: center;
     gap: 4px;
@@ -522,7 +521,7 @@ body {
     align-items: center;
     justify-content: center;
     white-space: nowrap;
-    width: 72px !important;
+    width: 96px !important;     /* match aisle column */
 }
 
 .checked-row .qty-input,
