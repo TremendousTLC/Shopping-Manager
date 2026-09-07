@@ -553,16 +553,24 @@ body {
    gap: 8px;
 }
 
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* center entire toolbar */
+}
+
 .toolbar-row,
 .toolbar-search-row {
   display: flex;
+  justify-content: center;   /* CENTER TOOLBAR */
   gap: 10px;
   margin-bottom: 12px;
   align-items: center;
 }
 
 .toolbar-search-row input.search {
-  flex: 1;
+  width: 260px;      /* perfect desktop width */
+  max-width: 260px;
 }
 
 #clearSearchBtn {
