@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Shopping List 72</title>
+  <title>Shopping List 73</title>
 
   <style>
 ul, li {
@@ -350,23 +350,23 @@ body {
 .node-header {
     display: grid;
     grid-template-columns:
-        28px              /* checkbox */
-         4px              /* spacer */
-        34px              /* chevron */
-        28px              /* drag */
-        minmax(160px, 1fr)/* NAME */
-        72px              /* AISLE */
-        80px;             /* ACTIONS */
+        28px
+         4px
+        34px
+        28px
+        minmax(160px, 1fr)
+        minmax(72px, auto)   /* FIXED */
+        80px;
 
     align-items: center;
     gap: 4px;
     padding: 4px 0;
-
     width: 100%;
     max-width: 100%;
     box-sizing: border-box !important;
     min-width: 0 !important;
 }
+
 
 .node-name {
    flex: 1;
@@ -449,7 +449,6 @@ body {
    6. ITEM ROW SYSTEM — FLAT ITEMS & CHECKED ITEMS
    ============================================================ */
 
-/* FLAT ITEM ROW (UNCHECKED ITEMS) */
 .flat-item {
     display: grid !important;
     grid-template-columns:
@@ -458,17 +457,17 @@ body {
         34px
         28px
         minmax(160px, 1fr)
-        72px
+        minmax(72px, auto)   /* FIXED */
         80px;
 
     align-items: center;
     gap: 4px;
     padding: 4px 0;
-
     width: 100%;
     box-sizing: border-box !important;
     min-width: 0 !important;
 }
+
 
 /* CHECKED ROW (CHECKMARKED ITEMS) */
 .checked-row {
@@ -479,13 +478,12 @@ body {
         34px
         28px
         minmax(160px, 1fr)
-        72px
+        minmax(72px, auto)   /* FIXED */
         80px;
 
     align-items: center;
     gap: 4px;
     padding: 4px 0;
-
     width: 100%;
     box-sizing: border-box !important;
     min-width: 0 !important;
